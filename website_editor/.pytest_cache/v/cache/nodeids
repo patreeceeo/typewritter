@@ -1,0 +1,4 @@
+[
+  "website_editor/tests.py::ViewTests::test_my_view",
+  "website_editor/tests.py::FunctionalTests::test_root"
+]

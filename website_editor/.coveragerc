@@ -1,0 +1,3 @@
+[run]
+source = website_editor
+omit = website_editor/test*
