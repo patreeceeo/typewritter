@@ -1,5 +1,5 @@
 from cornice.resource import resource
-from .models import PostModel, PostCollection
+from .controllers import PostController
 
 # Using this approach:
 # https://cornice.readthedocs.io/en/latest/resources.html
@@ -8,11 +8,7 @@ from .models import PostModel, PostCollection
 class PostResource(object):
     def __init__(self, request, context=None):
         self.request = request
-
-        # TODO: remove dummy code
-        # replace with loading posts from file system
-        self.collection = PostCollection()
-        self.collection.add(PostModel(id=1, file_path='/posts/boo', post_with_metadata='Yo!'))
+        self.post_controller = PostController(request.registry.settings['posts_dir_path'])
 
     def __acl__(self):
         return [(Allow, Everyone, 'everything')]
@@ -21,9 +17,10 @@ class PostResource(object):
         return {'posts': _POSTS.keys()}
 
     def get(self):
-        return self.collection.get(int(self.request.matchdict['id'])).to_json()
+        return self.post_controller.posts.get(int(self.request.matchdict['id'])).to_json()
 
     def collection_post(self):
-        print(self.request.json_body)
-        _POSTS[len(_POSTS) + 1] = self.request.json_body
-        return True
+        pass
+        # print(self.request.json_body)
+        # _POSTS[len(_POSTS) + 1] = self.request.json_body
+        # return True

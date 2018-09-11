@@ -1,15 +1,25 @@
 from glob import glob
 
 class PostCollection(object):
-    def __init__(self):
-        # self.models = models
+    def __init__(self, raw_models):
         self.by_id = {}
+        self.length = 0
+        for data in raw_models:
+            self.add(PostModel(**data))
 
     def add(self, model):
+        model.attrs['id'] = self.length
         self.by_id[model.attrs['id']] = model
+        self.length = self.length + 1
 
     def get(self, id):
         return self.by_id[id]
+
+    def to_json(self):
+        return [
+            model.to_json()
+            for model in self.by_id.values()
+        ]
 
 class PostModel(object):
 
@@ -37,6 +47,9 @@ def load_post(abs_file_path):
 
 
 def load_posts(post_dir_path):
+    print('post_dir_path', post_dir_path)
+    print('glob result', glob(post_dir_path + '/*.md'))
+
     return [
         load_post(path)
         for path in glob(post_dir_path + '/*.md')

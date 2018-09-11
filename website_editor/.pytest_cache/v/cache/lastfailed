@@ -1,3 +1,4 @@
 {
+  "website_editor/tests.py::TestPostController::test_init": true,
   "website_editor/tests.py::TestPostLoader::test_get_post": true
 }
