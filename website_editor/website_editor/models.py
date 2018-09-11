@@ -1,5 +1,4 @@
-
-
+from glob import glob
 
 class PostCollection(object):
     def __init__(self):
@@ -16,9 +15,6 @@ class PostModel(object):
 
     def __init__(self, **kwargs):
         self.attrs = kwargs
-        # self.id = id
-        # self.abs_file_path = BASE_PATH + file_path
-        # self.post_with_metadata = post_with_metadata
 
     @classmethod
     def from_json(cls, data):
@@ -26,22 +22,23 @@ class PostModel(object):
 
     def to_json(self):
         return self.attrs
-        # return {
-        #     'id': self.id,
-        #     'file_path': self.file_path,
-        #     'post_with_metadata': self.post_with_metadata
-        # }
-
-    def abs_file_path(self):
-        BASE_PATH='/Users/patrick/tmp'
-        return BASE_PATH + self.attrs['file_path']
 
 
 def save_post(post_model):
-    with open(post_model.abs_file_path(), 'w') as post_file:
+    with open(post_model.abs_file_path, 'w') as post_file:
         post_file.write(post_model.post_with_metadata)
 
-def load_post(post_model):
-    with open(post_model.abs_file_path(), 'r') as post_file:
-        post_model.post_with_metadata = post_file.read()
+def load_post(abs_file_path):
+    with open(abs_file_path, 'r') as post_file:
+        return {
+            'post_with_metadata': post_file.read(),
+            'abs_file_path': abs_file_path
+        }
+
+
+def load_posts(post_dir_path):
+    return [
+        load_post(path)
+        for path in glob(post_dir_path + '/*.md')
+    ]
 

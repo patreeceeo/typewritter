@@ -1,1 +1,3 @@
-{}
+{
+  "website_editor/tests.py::TestPostLoader::test_get_post": true
+}
