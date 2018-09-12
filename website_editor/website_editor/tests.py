@@ -4,47 +4,60 @@ from pyfakefs import fake_filesystem_unittest
 from pyramid import testing
 
 class mock_registry:
-    settings = dict(
-        posts_dir_path='/path/to/posts'
-    )
-
-def load_posts_mock(path):
-    return [
-        dict(
-            abs_file_path='/path/to/posts/1.md',
-            post_with_metadata='Yes'
-        ),
-        dict(
-            abs_file_path='/path/to/posts/2.md',
-            post_with_metadata='Si'
+    def __init__(self, posts_dir_path):
+        self.settings = dict(
+            posts_dir_path=posts_dir_path
         )
-    ]
 
-class TestPostResource(unittest.TestCase):
+def mock_load_posts(posts_dir_path):
+    def mock(path):
+        return [
+            dict(
+                abs_file_path=posts_dir_path + '/1.md',
+                post_with_metadata='Yes'
+            ),
+            dict(
+                abs_file_path=posts_dir_path + '/2.md',
+                post_with_metadata='Si'
+            )
+        ]
+
+    return mock
+
+class TestPostResource(fake_filesystem_unittest.TestCase):
     def setUp(self):
+        self.setUpPyfakefs()
         self.config = testing.setUp()
 
     def tearDown(self):
         testing.tearDown()
 
-    # def test_post_post(self):
-    #     from .resources import PostResource
-    #     request = testing.DummyRequest()
-    #     request.url = '/api/posts/1'
-    #     request.POST = {
-    #             'post_with_metadata': 'Yo!'
-    #     }
+    def test_post_post(self):
+        from .resources import PostResource
+        from glob import glob
+        self.fs.create_dir('/path/to/posts')
+        request = testing.DummyRequest()
+        request.url = '/api/posts/1'
+        request.registry = mock_registry('/path/to/posts')
+        request.POST = {
+            'abs_file_path': '/path/to/posts/1.md',
+            'post_with_metadata': 'Yo!'
+        }
 
-    #     PostResource.post(PostResource(request))
+        self.assertEqual([], glob('/path/to/posts/*.md'))
 
-    # TODO this test seems pretty trivial, maybe too much so
-    @patch('website_editor.models.load_posts', load_posts_mock)
+        PostResource.post(PostResource(request))
+
+        self.assertEqual(['/path/to/posts/1.md'], glob('/path/to/posts/*.md'))
+
+
+    @patch('website_editor.models.load_posts', mock_load_posts('/path/to/posts'))
     def test_get_post(self):
         from .resources import PostResource
         request = testing.DummyRequest()
         request.url = '/api/posts/1'
         request.matchdict = {'id': u'1'}
-        request.registry = mock_registry
+        request.registry = mock_registry('/path/to/posts')
 
         info = PostResource.get(PostResource(request))
         self.assertEqual(info['post_with_metadata'], 'Si')

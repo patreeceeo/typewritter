@@ -1,4 +1,4 @@
-from .models import load_posts, PostCollection
+from .models import load_posts, PostModel, PostCollection
 
 _posts_by_path = {}
 
@@ -11,5 +11,13 @@ class PostController(object):
     @property
     def posts(self):
         return _posts_by_path[self.posts_dir_path]
+
+    def lookupById(self, id):
+        return self.posts.get(id)
+
+    def create(self, **kwargs):
+        model = PostModel(**kwargs)
+        self.posts.add(model)
+        model.save()
 
 

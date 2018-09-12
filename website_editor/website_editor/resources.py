@@ -17,7 +17,11 @@ class PostResource(object):
         return {'posts': _POSTS.keys()}
 
     def get(self):
-        return self.post_controller.posts.get(int(self.request.matchdict['id'])).to_json()
+        return self.post_controller.lookupById(int(self.request.matchdict['id'])).to_json()
+
+    def post(self):
+        params = self.request.POST
+        self.post_controller.create(**params)
 
     def collection_post(self):
         pass

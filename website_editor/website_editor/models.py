@@ -33,10 +33,10 @@ class PostModel(object):
     def to_json(self):
         return self.attrs
 
+    def save(self):
+        with open(self.attrs['abs_file_path'], 'w') as post_file:
+            post_file.write(self.attrs['post_with_metadata'])
 
-def save_post(post_model):
-    with open(post_model.abs_file_path, 'w') as post_file:
-        post_file.write(post_model.post_with_metadata)
 
 def load_post(abs_file_path):
     with open(abs_file_path, 'r') as post_file:
@@ -44,7 +44,6 @@ def load_post(abs_file_path):
             'post_with_metadata': post_file.read(),
             'abs_file_path': abs_file_path
         }
-
 
 def load_posts(post_dir_path):
     print('post_dir_path', post_dir_path)
