@@ -20,4 +20,9 @@ class PostController(object):
         self.posts.add(model)
         model.save()
 
+    def update(self, **kwargs):
+        model = self.posts.get(kwargs['id'])
+        model.attrs['post_with_metadata'] = kwargs['post_with_metadata']
+        model.save()
+
 

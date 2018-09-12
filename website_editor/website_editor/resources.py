@@ -23,6 +23,10 @@ class PostResource(object):
         params = self.request.POST
         self.post_controller.create(**params)
 
+    def put(self):
+        params = self.request.PUT
+        self.post_controller.update(**params)
+
     def collection_post(self):
         pass
         # print(self.request.json_body)

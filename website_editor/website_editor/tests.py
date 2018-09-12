@@ -62,6 +62,23 @@ class TestPostResource(fake_filesystem_unittest.TestCase):
         info = PostResource.get(PostResource(request))
         self.assertEqual(info['post_with_metadata'], 'Si')
 
+    def test_put_post(self):
+        from .resources import PostResource
+        self.fs.create_file('/path/to/posts/1.md', contents='Yo!')
+        request = testing.DummyRequest()
+        request.url = '/api/posts/1'
+        request.registry = mock_registry('/path/to/posts')
+        request.PUT = {
+            'id': 0,
+            'abs_file_path': '/path/to/posts/1.md',
+            'post_with_metadata': 'Hi!'
+        }
+
+        PostResource.put(PostResource(request))
+
+        with open('/path/to/posts/1.md') as post_file:
+            self.assertEqual('Hi!', post_file.read())
+
 
 class TestPostController(unittest.TestCase):
     @patch('website_editor.models.PostCollection', Mock)
