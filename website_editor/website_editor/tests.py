@@ -50,6 +50,17 @@ class TestPostResource(unittest.TestCase):
         self.assertEqual(info['post_with_metadata'], 'Si')
 
 
+class TestPostController(unittest.TestCase):
+    @patch('website_editor.models.PostCollection', Mock)
+    @patch('website_editor.models.load_posts', Mock)
+    def test_reuses_collection_for_same_path(self):
+        from .controllers import PostController
+        controller1 = PostController('path1')
+        controller2 = PostController('path1')
+        controller3 = PostController('path2')
+        self.assertEqual(controller1.posts, controller2.posts)
+        self.assertNotEqual(controller1.posts, controller3.posts)
+
 
 class TestPostLoader(fake_filesystem_unittest.TestCase):
     def setUp(self):

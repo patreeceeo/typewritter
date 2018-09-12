@@ -1,4 +1,5 @@
 [
   "website_editor/tests.py::TestPostResource::test_get_post",
+  "website_editor/tests.py::TestPostController::test_reuses_collection",
   "website_editor/tests.py::TestPostLoader::test_load_post"
 ]
