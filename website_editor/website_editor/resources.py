@@ -14,18 +14,20 @@ class PostResource(object):
         return [(Allow, Everyone, 'everything')]
 
     def collection_get(self):
-        return {'posts': self.post_controller.posts.to_json()}
+        return {'posts': list(self.post_controller.fetch())}
 
     def get(self):
-        return self.post_controller.lookupById(int(self.request.matchdict['id'])).to_json()
+        filter_crit = lambda post: post['id'] == int(self.request.matchdict['id'])
+        return next(self.post_controller.fetch(filter_crit))
 
     def post(self):
         params = self.request.POST
-        self.post_controller.create(**params)
+        print('self.post_controller',self.post_controller)
+        self.post_controller.create(params)
 
     def put(self):
         params = self.request.PUT
-        self.post_controller.update(**params)
+        self.post_controller.update(params)
 
     def collection_post(self):
         pass

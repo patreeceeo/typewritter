@@ -15,10 +15,11 @@ class PostCollection(object):
     def get(self, id):
         return self.by_id[id]
 
-    def to_json(self):
+    def to_json(self, filter_crit):
+        json_list = [model.to_json() in self.by_id.values()]
         return [
-            model.to_json()
-            for model in self.by_id.values()
+            json_dict
+            for model in filter(json_list, filter_crit)
         ]
 
 class PostModel(object):

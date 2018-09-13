@@ -9,50 +9,74 @@ class mock_registry:
             posts_dir_path=posts_dir_path
         )
 
-def mock_load_posts(posts_dir_path):
-    def mock(path):
-        return [
+
+class MockPostController(object):
+    def __init__(self, posts_dir_path):
+        self.posts = [
             dict(
+                id=0,
                 abs_file_path=posts_dir_path + '/1.md',
                 post_with_metadata='Yes'
             ),
             dict(
+                id=1,
                 abs_file_path=posts_dir_path + '/2.md',
                 post_with_metadata='Si'
             )
         ]
 
-    return mock
 
-class TestPostResource(fake_filesystem_unittest.TestCase):
+
+    def fetch(self, filter_crit=None):
+        return filter(filter_crit, self.posts)
+
+
+class TestPostResource(unittest.TestCase):
     def setUp(self):
-        self.setUpPyfakefs()
         self.config = testing.setUp()
+        patcher = patch('website_editor.controllers.PostController', MockPostController)
+        patcher.start()
+        self.addCleanup(patcher.stop)
+        self.addCleanup(testing.tearDown)
 
-    def tearDown(self):
-        testing.tearDown()
-
-    def test_post_post(self):
+    def test_post(self):
         from .resources import PostResource
-        from glob import glob
-        self.fs.create_dir('/path/to/posts')
         request = testing.DummyRequest()
         request.url = '/api/posts/1'
         request.registry = mock_registry('/path/to/posts')
         request.POST = {
-            'abs_file_path': '/path/to/posts/1.md',
+            'abs_file_path': '/path/to/posts/3.md',
             'post_with_metadata': 'Yo!'
         }
 
-        self.assertEqual([], glob('/path/to/posts/*.md'))
+        thing = PostResource(request)
 
-        PostResource.post(PostResource(request))
+        setattr(thing.post_controller, 'create', Mock())
 
-        self.assertEqual(['/path/to/posts/1.md'], glob('/path/to/posts/*.md'))
+        PostResource.post(thing)
+
+        thing.post_controller.create.assert_called_once_with(request.POST)
+
+    def test_put(self):
+        from .resources import PostResource
+        request = testing.DummyRequest()
+        request.url = '/api/posts/1'
+        request.registry = mock_registry('/path/to/posts')
+        request.PUT = {
+            'id': 0,
+            'post_with_metadata': 'Hi!'
+        }
+
+        thing = PostResource(request)
+
+        setattr(thing.post_controller, 'update', Mock())
+
+        PostResource.put(thing)
+
+        thing.post_controller.update.assert_called_once_with(request.PUT)
 
 
-    @patch('website_editor.models.load_posts', mock_load_posts('/path/to/posts'))
-    def test_get_post(self):
+    def test_get(self):
         from .resources import PostResource
         request = testing.DummyRequest()
         request.url = '/api/posts/1'
@@ -62,8 +86,7 @@ class TestPostResource(fake_filesystem_unittest.TestCase):
         info = PostResource.get(PostResource(request))
         self.assertEqual(info['post_with_metadata'], 'Si')
 
-    @patch('website_editor.models.load_posts', mock_load_posts('/path/to/posts'))
-    def test_get_posts(self):
+    def test_collection_get(self):
         from .resources import PostResource
         request = testing.DummyRequest()
         request.url = '/api/posts'
@@ -74,34 +97,24 @@ class TestPostResource(fake_filesystem_unittest.TestCase):
         self.assertEqual(posts[0]['post_with_metadata'], 'Yes')
         self.assertEqual(posts[1]['post_with_metadata'], 'Si')
 
-    def test_put_post(self):
-        from .resources import PostResource
-        self.fs.create_file('/path/to/posts/1.md', contents='Yo!')
-        request = testing.DummyRequest()
-        request.url = '/api/posts/1'
-        request.registry = mock_registry('/path/to/posts')
-        request.PUT = {
-            'id': 0,
-            'abs_file_path': '/path/to/posts/1.md',
-            'post_with_metadata': 'Hi!'
-        }
-
-        PostResource.put(PostResource(request))
-
-        with open('/path/to/posts/1.md') as post_file:
-            self.assertEqual('Hi!', post_file.read())
-
 
 class TestPostController(unittest.TestCase):
-    @patch('website_editor.models.PostCollection', Mock)
-    @patch('website_editor.models.load_posts', Mock)
     def test_reuses_collection_for_same_path(self):
+        self.PostCollection = Mock()
+        patcher = patch.multiple('website_editor.controllers',
+            PostCollection=self.PostCollection,
+            load_posts=lambda path: path,
+        )
+        patcher.start()
+        self.addCleanup(patcher.stop)
+
         from .controllers import PostController
+        from .models import PostCollection
         controller1 = PostController('path1')
         controller2 = PostController('path1')
+        self.PostCollection.assert_called_once_with('path1')
         controller3 = PostController('path2')
-        self.assertEqual(controller1.posts, controller2.posts)
-        self.assertNotEqual(controller1.posts, controller3.posts)
+        self.PostCollection.assert_called_with('path2')
 
 
 class TestPostLoader(fake_filesystem_unittest.TestCase):

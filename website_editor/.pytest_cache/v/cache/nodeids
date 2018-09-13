@@ -1,8 +1,9 @@
 [
-  "website_editor/tests.py::TestPostResource::test_get_post",
-  "website_editor/tests.py::TestPostResource::test_get_posts",
-  "website_editor/tests.py::TestPostResource::test_post_post",
-  "website_editor/tests.py::TestPostResource::test_put_post",
+  "website_editor/tests.py::TestPostResource::test_collection_get",
+  "website_editor/tests.py::TestPostResource::test_get",
+  "website_editor/tests.py::TestPostResource::test_post",
+  "website_editor/tests.py::TestPostResource::test_put",
+  "website_editor/tests.py::TestPatching::test_decorator",
   "website_editor/tests.py::TestPostController::test_reuses_collection_for_same_path",
   "website_editor/tests.py::TestPostLoader::test_load_post"
 ]
