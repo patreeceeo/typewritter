@@ -1,8 +1,0 @@
-{
-  "website_editor/tests.py::TestPostController::test_init": true,
-  "website_editor/tests.py::TestPostLoader::test_get_post": true,
-  "website_editor/tests.py::TestPostResource::test_get_post": true,
-  "website_editor/tests.py::TestPostResource::test_get_posts": true,
-  "website_editor/tests.py::TestPostResource::test_post_post": true,
-  "website_editor/tests.py::TestPostResource::test_put_post": true
-}
