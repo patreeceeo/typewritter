@@ -62,6 +62,18 @@ class TestPostResource(fake_filesystem_unittest.TestCase):
         info = PostResource.get(PostResource(request))
         self.assertEqual(info['post_with_metadata'], 'Si')
 
+    @patch('website_editor.models.load_posts', mock_load_posts('/path/to/posts'))
+    def test_get_posts(self):
+        from .resources import PostResource
+        request = testing.DummyRequest()
+        request.url = '/api/posts'
+        request.registry = mock_registry('/path/to/posts')
+
+        posts = PostResource.collection_get(PostResource(request))['posts']
+
+        self.assertEqual(posts[0]['post_with_metadata'], 'Yes')
+        self.assertEqual(posts[1]['post_with_metadata'], 'Si')
+
     def test_put_post(self):
         from .resources import PostResource
         self.fs.create_file('/path/to/posts/1.md', contents='Yo!')

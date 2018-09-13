@@ -14,7 +14,7 @@ class PostResource(object):
         return [(Allow, Everyone, 'everything')]
 
     def collection_get(self):
-        return {'posts': _POSTS.keys()}
+        return {'posts': self.post_controller.posts.to_json()}
 
     def get(self):
         return self.post_controller.lookupById(int(self.request.matchdict['id'])).to_json()
