@@ -29,7 +29,7 @@ class PostModel(object):
 
     @classmethod
     def from_json(cls, data):
-        return cls(**constructor_args)
+        return cls(**data)
 
     def to_json(self):
         return self.attrs
@@ -37,6 +37,11 @@ class PostModel(object):
     def save(self):
         with open(self.attrs['abs_file_path'], 'w') as post_file:
             post_file.write(self.attrs['post_with_metadata'])
+
+    def delete(self):
+        import os
+        os.remove(self.attrs['abs_file_path'])
+
 
 
 def load_post(abs_file_path):

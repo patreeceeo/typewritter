@@ -161,6 +161,17 @@ class TestPostModel(fake_filesystem_unittest.TestCase):
         with open('/path/to/posts/1.md') as post_file:
             self.assertEqual('Hi', post_file.read())
 
+    def test_delete(self):
+        from .models import PostModel
+        import os
+        model = PostModel(
+            abs_file_path='/path/to/posts/1.md',
+            post_with_metadata='Hi'
+        )
+        model.save()
+        model.delete()
+
+        self.assertTrue(not os.path.isfile('/path/to/posts/1.md'))
 
 
 # class FunctionalTests(unittest.TestCase):
