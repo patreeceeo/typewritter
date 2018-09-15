@@ -179,6 +179,11 @@ class TestPostModel(fake_filesystem_unittest.TestCase):
         model = PostModel.from_json(attrs)
         self.assertEqual(attrs, model.attrs)
 
+    def test_to_json(self):
+        from .models import PostModel
+        model = PostModel(abs_file_path='/', post_with_metadata='Hi')
+        self.assertEqual(model.attrs, model.to_json())
+
 
 # class FunctionalTests(unittest.TestCase):
 #     def setUp(self):
