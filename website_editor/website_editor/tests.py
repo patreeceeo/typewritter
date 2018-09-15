@@ -124,9 +124,6 @@ class TestPostLoader(fake_filesystem_unittest.TestCase):
         self.fs.create_file('/path/to/posts/2.md', contents='Yo!')
         self.fs.create_file('/path/to/posts/3.md', contents='Yo!')
 
-    def tearDown(self):
-        testing.tearDown()
-
     def test_load_post(self):
         from .models import load_posts
 
@@ -147,6 +144,22 @@ class TestPostLoader(fake_filesystem_unittest.TestCase):
             }
         ], models)
 
+
+class TestPostModel(fake_filesystem_unittest.TestCase):
+    def setUp(self):
+        self.setUpPyfakefs()
+        self.fs.create_dir('/path/to/posts')
+
+    def test_save(self):
+        from .models import PostModel
+        model = PostModel(
+            abs_file_path='/path/to/posts/1.md',
+            post_with_metadata='Hi'
+        )
+        model.save()
+
+        with open('/path/to/posts/1.md') as post_file:
+            self.assertEqual('Hi', post_file.read())
 
 
 
