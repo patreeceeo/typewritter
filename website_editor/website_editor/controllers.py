@@ -26,11 +26,10 @@ class PostController(object):
     def create(self, attrs):
         model = PostModel(**attrs)
         self.posts.add(model)
-        model.save()
+        model.save(self.posts_dir_path)
 
     def update(self, **kwargs):
         model = self.posts.get(kwargs['id'])
         model.attrs['post_with_metadata'] = kwargs['post_with_metadata']
-        model.save()
-
+        model.save(self.posts_dir_path)
 

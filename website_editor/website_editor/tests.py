@@ -15,12 +15,12 @@ class MockPostController(object):
         self.posts = [
             dict(
                 id=0,
-                abs_file_path=posts_dir_path + '/1.md',
+                file_path='1.md',
                 post_with_metadata='Yes'
             ),
             dict(
                 id=1,
-                abs_file_path=posts_dir_path + '/2.md',
+                file_path='2.md',
                 post_with_metadata='Si'
             )
         ]
@@ -45,7 +45,7 @@ class TestPostResource(unittest.TestCase):
         request.url = '/api/posts/1'
         request.registry = mock_registry('/path/to/posts')
         request.POST = {
-            'abs_file_path': '/path/to/posts/3.md',
+            'file_path': '/path/to/posts/3.md',
             'post_with_metadata': 'Yo!'
         }
 
@@ -149,15 +149,15 @@ class TestPostLoader(fake_filesystem_unittest.TestCase):
 
         self.assertEqual([
             {
-                'abs_file_path': '/path/to/posts/1.md',
+                'file_path': '/path/to/posts/1.md',
                 'post_with_metadata': 'Yo!'
             },
             {
-                'abs_file_path': '/path/to/posts/2.md',
+                'file_path': '/path/to/posts/2.md',
                 'post_with_metadata': 'Yo!'
             },
             {
-                'abs_file_path': '/path/to/posts/3.md',
+                'file_path': '/path/to/posts/3.md',
                 'post_with_metadata': 'Yo!'
             }
         ], models)
@@ -171,10 +171,10 @@ class TestPostModel(fake_filesystem_unittest.TestCase):
     def test_save(self):
         from .models import PostModel
         model = PostModel(
-            abs_file_path='/path/to/posts/1.md',
+            file_path='1.md',
             post_with_metadata='Hi'
         )
-        model.save()
+        model.save('/path/to/posts')
 
         with open('/path/to/posts/1.md') as post_file:
             self.assertEqual('Hi', post_file.read())
@@ -183,33 +183,37 @@ class TestPostModel(fake_filesystem_unittest.TestCase):
         from .models import PostModel
         import os
         model = PostModel(
-            abs_file_path='/path/to/posts/1.md',
+            file_path='/path/to/posts/1.md',
             post_with_metadata='Hi'
         )
-        model.save()
-        model.delete()
+        model.save('/path/to/posts')
+        model.delete('/path/to/posts')
 
         self.assertTrue(not os.path.isfile('/path/to/posts/1.md'))
 
     def test_from_json(self):
         from .models import PostModel
-        attrs = {'abs_file_path': '/', 'post_with_metadata': 'Hi!'}
+        attrs = {'file_path': '/', 'post_with_metadata': 'Hi!'}
         model = PostModel.from_json(attrs)
         self.assertEqual(attrs, model.attrs)
 
     def test_to_json(self):
         from .models import PostModel
-        model = PostModel(abs_file_path='/', post_with_metadata='Hi')
+        model = PostModel(file_path='/', post_with_metadata='Hi')
         self.assertEqual(model.attrs, model.to_json())
 
 
-# class FunctionalTests(unittest.TestCase):
+# class FunctionalTests(fake_filesystem_unittest.TestCase):
 #     def setUp(self):
+#         self.setUpPyfakefs()
 #         from website_editor import main
 #         app = main({})
 #         from webtest import TestApp
 #         self.testapp = TestApp(app)
 
-#     def test_root(self):
-#         res = self.testapp.get('/', status=200)
-#         self.assertTrue(b'Pyramid' in res.body)
+#     def test_post_lifecycle(self):
+#         res = self.testapp.post_json('/api/posts', {
+#             file_path: '/path/to/posts/1'
+#         })
+
+

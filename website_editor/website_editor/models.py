@@ -1,4 +1,5 @@
 from glob import glob
+import os
 
 class PostCollection(object):
     def __init__(self, raw_models):
@@ -34,21 +35,20 @@ class PostModel(object):
     def to_json(self):
         return self.attrs
 
-    def save(self):
-        with open(self.attrs['abs_file_path'], 'w') as post_file:
+    def save(self, dir_path):
+        with open(os.path.join(dir_path, self.attrs['file_path']), 'w') as post_file:
             post_file.write(self.attrs['post_with_metadata'])
 
-    def delete(self):
-        import os
-        os.remove(self.attrs['abs_file_path'])
+    def delete(self, dir_path):
+        os.remove(os.path.join(dir_path, self.attrs['file_path']))
 
 
 
-def load_post(abs_file_path):
-    with open(abs_file_path, 'r') as post_file:
+def load_post(file_path):
+    with open(file_path, 'r') as post_file:
         return {
             'post_with_metadata': post_file.read(),
-            'abs_file_path': abs_file_path
+            'file_path': file_path
         }
 
 def load_posts(post_dir_path):
