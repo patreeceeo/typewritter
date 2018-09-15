@@ -22,15 +22,15 @@ class PostResource(object):
 
     def post(self):
         params = self.request.POST
-        print('self.post_controller',self.post_controller)
         self.post_controller.create(params)
 
     def put(self):
         params = self.request.PUT
         self.post_controller.update(params)
 
+    def delete(self):
+        params = self.request.DELETE
+        self.post_controller.delete(params['id'])
+
     def collection_post(self):
-        pass
-        # print(self.request.json_body)
-        # _POSTS[len(_POSTS) + 1] = self.request.json_body
-        # return True
+        raise NotImplemented

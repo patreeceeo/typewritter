@@ -97,6 +97,24 @@ class TestPostResource(unittest.TestCase):
         self.assertEqual(posts[0]['post_with_metadata'], 'Yes')
         self.assertEqual(posts[1]['post_with_metadata'], 'Si')
 
+    def test_delete(self):
+        from .resources import PostResource
+        request = testing.DummyRequest()
+        request.url = '/api/posts'
+        request.registry = mock_registry('/path/to/posts')
+        request.DELETE = {
+                'id': 1
+        }
+
+        thing = PostResource(request)
+
+        setattr(thing.post_controller, 'delete', Mock())
+
+        PostResource.delete(thing)
+
+        thing.post_controller.delete.assert_called_once_with(1)
+
+
 
 class TestPostController(unittest.TestCase):
     def test_reuses_collection_for_same_path(self):
