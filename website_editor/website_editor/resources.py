@@ -1,5 +1,6 @@
 from cornice.resource import resource
 from .controllers import PostController
+from pyramid.httpexceptions import HTTPNotFound
 
 # Using this approach:
 # https://cornice.readthedocs.io/en/latest/resources.html
@@ -18,19 +19,18 @@ class PostResource(object):
 
     def get(self):
         filter_crit = lambda post: post['id'] == int(self.request.matchdict['id'])
-        return next(self.post_controller.fetch(filter_crit))
-
-    def post(self):
-        params = self.request.POST
-        self.post_controller.create(params)
-
-    def put(self):
-        params = self.request.PUT
-        self.post_controller.update(params)
-
-    def delete(self):
-        params = self.request.DELETE
-        self.post_controller.delete(params['id'])
+        try:
+            return next(self.post_controller.fetch(filter_crit))
+        except StopIteration:
+            raise HTTPNotFound()
 
     def collection_post(self):
-        raise NotImplemented
+        self.post_controller.create(self.request.json_body)
+
+    def put(self):
+        attrs = self.request.json_body
+        self.post_controller.update(int(self.request.matchdict['id']), attrs)
+
+    def delete(self):
+        self.post_controller.delete(int(self.request.matchdict['id']))
+

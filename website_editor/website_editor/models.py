@@ -13,15 +13,16 @@ class PostCollection(object):
         self.by_id[model.attrs['id']] = model
         self.length = self.length + 1
 
+    def remove(self, id):
+        del self.by_id[id]
+        self.length -= 1
+
     def get(self, id):
         return self.by_id[id]
 
-    def to_json(self, filter_crit):
-        json_list = [model.to_json() in self.by_id.values()]
-        return [
-            json_dict
-            for model in filter(json_list, filter_crit)
-        ]
+    def to_json(self, filter_crit=None):
+        json_list = [model.to_json() for model in self.by_id.values()]
+        return filter(filter_crit, json_list)
 
 class PostModel(object):
 
@@ -52,9 +53,6 @@ def load_post(file_path):
         }
 
 def load_posts(post_dir_path):
-    print('post_dir_path', post_dir_path)
-    print('glob result', glob(post_dir_path + '/*.md'))
-
     return [
         load_post(path)
         for path in glob(post_dir_path + '/*.md')

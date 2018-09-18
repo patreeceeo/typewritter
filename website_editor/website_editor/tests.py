@@ -2,6 +2,7 @@ import unittest
 from unittest.mock import patch, Mock
 from pyfakefs import fake_filesystem_unittest
 from pyramid import testing
+from pyramid.httpexceptions import HTTPNotFound
 
 class mock_registry:
     def __init__(self, posts_dir_path):
@@ -34,17 +35,18 @@ class MockPostController(object):
 class TestPostResource(unittest.TestCase):
     def setUp(self):
         self.config = testing.setUp()
-        patcher = patch('website_editor.controllers.PostController', MockPostController)
+        patcher = patch('website_editor.resources.PostController', MockPostController)
         patcher.start()
         self.addCleanup(patcher.stop)
         self.addCleanup(testing.tearDown)
+        self.addCleanup(lambda: print('cleaning up!'))
 
     def test_post(self):
         from .resources import PostResource
         request = testing.DummyRequest()
         request.url = '/api/posts/1'
         request.registry = mock_registry('/path/to/posts')
-        request.POST = {
+        request.json_body = {
             'file_path': '/path/to/posts/3.md',
             'post_with_metadata': 'Yo!'
         }
@@ -53,17 +55,17 @@ class TestPostResource(unittest.TestCase):
 
         setattr(thing.post_controller, 'create', Mock())
 
-        PostResource.post(thing)
+        PostResource.collection_post(thing)
 
-        thing.post_controller.create.assert_called_once_with(request.POST)
+        thing.post_controller.create.assert_called_once_with(request.json_body)
 
     def test_put(self):
         from .resources import PostResource
         request = testing.DummyRequest()
-        request.url = '/api/posts/1'
+        request.url = '/api/posts/0'
         request.registry = mock_registry('/path/to/posts')
-        request.PUT = {
-            'id': 0,
+        request.matchdict = { 'id': 0 }
+        request.json_body = {
             'post_with_metadata': 'Hi!'
         }
 
@@ -73,7 +75,7 @@ class TestPostResource(unittest.TestCase):
 
         PostResource.put(thing)
 
-        thing.post_controller.update.assert_called_once_with(request.PUT)
+        thing.post_controller.update.assert_called_once_with(0, request.json_body)
 
 
     def test_get(self):
@@ -102,7 +104,7 @@ class TestPostResource(unittest.TestCase):
         request = testing.DummyRequest()
         request.url = '/api/posts'
         request.registry = mock_registry('/path/to/posts')
-        request.DELETE = {
+        request.matchdict = {
                 'id': 1
         }
 
@@ -203,17 +205,57 @@ class TestPostModel(fake_filesystem_unittest.TestCase):
         self.assertEqual(model.attrs, model.to_json())
 
 
-# class FunctionalTests(fake_filesystem_unittest.TestCase):
-#     def setUp(self):
-#         self.setUpPyfakefs()
-#         from website_editor import main
-#         app = main({})
-#         from webtest import TestApp
-#         self.testapp = TestApp(app)
+class FunctionalTests(fake_filesystem_unittest.TestCase):
+    def setUp(self):
+        from website_editor import main
 
-#     def test_post_lifecycle(self):
-#         res = self.testapp.post_json('/api/posts', {
-#             file_path: '/path/to/posts/1'
-#         })
+        settings = {
+            'posts_dir_path': '/path/to/posts'
+        }
+        app = main({}, **settings)
 
+        from webtest import TestApp
+        self.testapp = TestApp(app)
+
+        self.setUpPyfakefs()
+        self.fs.create_dir(settings['posts_dir_path'])
+
+    def test_post_lifecycle(self):
+        res = self.testapp.post_json('/api/posts', {
+            'file_path': '/path/to/posts/1.md',
+            'post_with_metadata': 'Hi!'
+        })
+
+        self.assertEqual(200, res.status_int)
+
+        res = self.testapp.get('/api/posts')
+
+        self.assertEqual(200, res.status_int)
+        self.assertEqual(1, len(res.json_body))
+
+        post_id = res.json_body['posts'][0]['id']
+
+        res = self.testapp.put_json('/api/posts/%d' % post_id, {
+            'file_path': '/path/to/posts/1.md',
+            'post_with_metadata': 'Hola!'
+        })
+
+        self.assertEqual(200, res.status_int)
+
+        res = self.testapp.get('/api/posts/%d' % post_id)
+
+        self.assertEqual(200, res.status_int)
+        self.assertEqual({
+            'file_path': '/path/to/posts/1.md',
+            'post_with_metadata': 'Hola!',
+            'id': 0
+        }, res.json_body)
+
+        res = self.testapp.delete('/api/posts/%d' % post_id)
+
+        self.assertEqual(200, res.status_int)
+
+        res = self.testapp.get('/api/posts/%d' % post_id, status=404)
+
+        self.assertEqual(404, res.status_int)
 
