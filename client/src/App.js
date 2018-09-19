@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import './App.css'
 import PropTypes from 'prop-types'
+import matter from 'gray-matter'
 
 class App extends Component {
   constructor(props) {
@@ -12,20 +13,49 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <TextEditor
-          onChange={(e) => {
-            this.setState({
-              text: e.target.value
-            })
-          }, () => {
-            fetch('/api/text/revision', {
-              method: "POST", // *GET, POST, PUT, DELETE, etc.
-              body: JSON.stringify(this.state.text),
-            })
-          }}
-        />
+        <ListPosts/>
       </div>
     )
+  }
+}
+
+function getExerpt(content) {
+  // Note: gray-matter has support for excerpts
+  return content.length >= 120 ? content.substr(0, 119) + '…' : content
+}
+
+class ListPosts extends Component {
+  constructor(props) {
+    super(props)
+
+    this.state = {posts:[]}
+
+    fetch('/api/posts', {
+      method: 'GET'
+    }).then((response) => {
+      response.json().then(({posts}) => {
+        this.setState({
+          posts
+        })
+      })
+    })
+  }
+
+  render() {
+    return <ul>{
+      this.state.posts.map((post) => {
+        const parsedPost = matter(post.post_with_metadata)
+
+        return (
+          <li key={post.id}>
+            <a href={`/post/${post.id}`}>{parsedPost.data.title}</a>
+            <p>
+              {getExerpt(parsedPost.content)}
+            </p>
+          </li>
+        )
+      })
+    }</ul>
   }
 }
 
