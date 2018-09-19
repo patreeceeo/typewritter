@@ -12,9 +12,9 @@
     "react-scripts": "1.1.5"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
+    "start": "react-scripts start --scripts-version react-scripts-ts",
+    "build": "react-scripts build --scripts-version react-scripts-ts",
+    "test": "react-scripts test --env=jsdom --scripts-version react-scripts-ts",
     "eject": "react-scripts eject"
   }
 }
