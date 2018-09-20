@@ -4,11 +4,8 @@ import ShowPost from './ShowPost'
 
 // Based on https://medium.com/@daveford/react-router-alternative-switch-acd7961f08db
 
-type Props = { user:User, path:string }
-
 const parsePath = (path) => {
   const segments = path.split('/')
-  console.log(segments)
 
   if(path === "/") {
     return { name: "index" }
@@ -24,13 +21,13 @@ const parsePath = (path) => {
   }
 }
 
-export default function router (props: Props) {
+export default function router (props) {
   const { name, matches } = parsePath(props.path)
   switch(name) {
-    case 'index':
-      return <ListPosts/>
-    case 'posts':
-      return <ShowPost id={matches.postId}/>
+  case 'index':
+    return <ListPosts/>
+  case 'posts':
+    return <ShowPost id={matches.postId}/>
   }
 }
 
