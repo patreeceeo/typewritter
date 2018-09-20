@@ -1,21 +1,12 @@
 import React from 'react'
 import matter from 'gray-matter'
+import Link from './Link'
 
 function getExerpt(content) {
   // Note: gray-matter has support for excerpts
   return content.length >= 120 ? content.substr(0, 119) + '…' : content
 }
 
-function Link(props) {
-
-    const onClick = (event)=> {
-        event.preventDefault();
-        window.history.pushState(null, null, props.to);
-        window.dispatchEvent(new window.PopStateEvent('popstate'));
-    };
-
-    return <a href={props.to} onClick={onClick}>{props.children}</a>
-}
 
 export default class ListPosts extends React.Component {
   constructor(props) {
