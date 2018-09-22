@@ -2,14 +2,9 @@ import React from 'react'
 import Link from './Link'
 import Container from './PostsContainer'
 import PropTypes from 'prop-types'
+import {getKey, getDetailUrl, getExerpt, getTitle} from './post'
 
 // TODO: use ReactReason?!
-
-function getExerpt(content) {
-  // Note: gray-matter has support for excerpts
-  return content.length >= 120 ? content.substr(0, 119) + '…' : content
-}
-
 
 class Presentation extends React.Component {
   render() {
@@ -17,10 +12,10 @@ class Presentation extends React.Component {
       this.props.posts.map((post) => {
 
         return (
-          <li key={post.id}>
-            <Link to={`/posts/${post.id}`}>{post.title}</Link>
+          <li key={getKey(post)}>
+            <Link to={getDetailUrl(post)}>{getTitle(post)}</Link>
             <p>
-              {getExerpt(post.content)}
+              {getExerpt(post)}
             </p>
           </li>
         )

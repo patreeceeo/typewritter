@@ -1,15 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import matter from 'gray-matter'
-
-function normalizePost({post_with_metadata, ...post}) {
-  const parsed = matter(post_with_metadata)
-  return {
-    ...post,
-    ...parsed.data,
-    content: parsed.content
-  }
-}
+import {normalize} from './post'
 
 export default class PostsContainer extends React.Component {
   constructor(props) {
@@ -23,7 +14,7 @@ export default class PostsContainer extends React.Component {
     }).then((response) => {
       response.json().then(({posts}) => {
         this.setState({
-          posts: posts.map(normalizePost)
+          posts: posts.map(normalize)
         })
       })
     })
