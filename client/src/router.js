@@ -5,17 +5,38 @@ import ShowPost from './ShowPost'
 // Based on https://medium.com/@daveford/react-router-alternative-switch-acd7961f08db
 
 const parsePath = (path) => {
-  const segments = path.split('/')
+  const [_junk, ...segments] = path.split('/')
+  void _junk
 
-  if(path === "/") {
+  if(segments.length === 0) {
     return { name: "index" }
   }
 
-  if(segments.length === 3) {
-    return {
-      name: segments[1],
-      matches: {
-        postId: parseInt(segments[2])
+  if(segments.length === 1) {
+    switch(segments[0]) {
+    case "posts":
+      return {
+        name: "postIndex"
+      }
+    default:
+      return {
+        name: "notFound"
+      }
+    }
+  }
+
+  if(segments.length === 2) {
+    switch(segments[0]) {
+    case "posts":
+      return {
+        name: "postDetail",
+        matches: {
+          postId: parseInt(segments[1], 10)
+        }
+      }
+    default:
+      return {
+        name: "notFound"
       }
     }
   }
@@ -24,10 +45,12 @@ const parsePath = (path) => {
 export default function router (props) {
   const { name, matches } = parsePath(props.path)
   switch(name) {
-  case 'index':
+  case 'postIndex':
     return <ListPosts/>
-  case 'posts':
-    return <ShowPost id={matches.postId}/>
+  case 'postDetail':
+    return <ShowPost {...matches}/>
+  default:
+    return "Not found"
   }
 }
 

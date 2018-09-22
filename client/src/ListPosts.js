@@ -1,6 +1,9 @@
 import React from 'react'
-import matter from 'gray-matter'
 import Link from './Link'
+import Container from './PostsContainer'
+import PropTypes from 'prop-types'
+
+// TODO: use ReactReason?!
 
 function getExerpt(content) {
   // Note: gray-matter has support for excerpts
@@ -8,33 +11,16 @@ function getExerpt(content) {
 }
 
 
-export default class ListPosts extends React.Component {
-  constructor(props) {
-    super(props)
-
-    this.state = {posts:[]}
-
-    fetch('/api/posts', {
-      method: 'GET'
-    }).then((response) => {
-      response.json().then(({posts}) => {
-        this.setState({
-          posts
-        })
-      })
-    })
-  }
-
+class Presentation extends React.Component {
   render() {
     return <ul>{
-      this.state.posts.map((post) => {
-        const parsedPost = matter(post.post_with_metadata)
+      this.props.posts.map((post) => {
 
         return (
           <li key={post.id}>
-            <Link to={`/posts/${post.id}`}>{parsedPost.data.title}</Link>
+            <Link to={`/posts/${post.id}`}>{post.title}</Link>
             <p>
-              {getExerpt(parsedPost.content)}
+              {getExerpt(post.content)}
             </p>
           </li>
         )
@@ -42,3 +28,12 @@ export default class ListPosts extends React.Component {
     }</ul>
   }
 }
+
+Presentation.propTypes = {
+  posts: PropTypes.array
+}
+
+export default function ListPosts (props) {
+  return <Container {...props} ><Presentation/></Container>
+}
+
