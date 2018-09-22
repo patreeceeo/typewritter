@@ -1,11 +1,21 @@
 import React from 'react'
-import Container from './PostsContainer'
+import Container from './DataContainer'
 import PropTypes from 'prop-types'
+import Link from '../Link'
+import {getEditUrl, getRawContent, getTitle} from './reducer.js'
 
 class Presentation extends React.Component {
+  renderPost(post) {
+    return <div>
+      <h1>{getTitle(post)}</h1>
+      <pre>{getRawContent(post)}</pre>
+      <Link to={getEditUrl(post)}>edit</Link>
+    </div>
+  }
+
   render() {
     const post = this.props.posts.filter((post) => post.id === this.props.postId)[0]
-    return post ? <div>{post.content}</div> : <div>Error</div>
+    return post ? this.renderPost(post) : <div>Error</div>
   }
 }
 

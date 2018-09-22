@@ -1,8 +1,8 @@
 import React from 'react'
-import Link from './Link'
-import Container from './PostsContainer'
+import Link from '../Link'
+import Container from './DataContainer'
 import PropTypes from 'prop-types'
-import {getKey, getDetailUrl, getExerpt, getTitle} from './post'
+import {getKey, getDetailUrl, getExerpt, getTitle} from './reducer'
 
 // TODO: use ReactReason?!
 

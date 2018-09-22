@@ -22,6 +22,14 @@ export function getExerpt(post) {
   return post.content.length >= 120 ? post.content.substr(0, 119) + '…' : post.content
 }
 
+export function getRawContent(post) {
+  return post.content
+}
+
 export function getDetailUrl(post) {
   return `/posts/${post.id}`
+}
+
+export function getEditUrl(post) {
+  return `/posts/${post.id}/edit`
 }

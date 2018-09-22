@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import {normalize} from './post'
+import {normalize} from './reducer.js'
 
 export default class PostsContainer extends React.Component {
   constructor(props) {

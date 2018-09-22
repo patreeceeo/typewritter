@@ -1,9 +1,10 @@
 import React from 'react'
-import ListPosts from './ListPosts'
-import ShowPost from './ShowPost'
+import ListPosts from './posts/ListPosts'
+import ViewPost from './posts/ViewPost'
 
 // Based on https://medium.com/@daveford/react-router-alternative-switch-acd7961f08db
 
+// TODO: use route string parsing library?
 const parsePath = (path) => {
   const [_junk, ...segments] = path.split('/')
   void _junk
@@ -48,7 +49,7 @@ export default function router (props) {
   case 'postIndex':
     return <ListPosts/>
   case 'postDetail':
-    return <ShowPost {...matches}/>
+    return <ViewPost {...matches}/>
   default:
     return "Not found"
   }
