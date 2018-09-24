@@ -1,6 +1,13 @@
 import matter from 'gray-matter'
 
-// TODO: write reducer
+export default function postsReducer(posts = [], action) {
+  switch(action.type) {
+    case 'UPDATE_POST_RAW_CONTENT': {
+      const post = getPostById(action.postId)
+      updateRawContent(post, action.content)
+  }
+}
+
 // use Saga?
 
 // collection functions
