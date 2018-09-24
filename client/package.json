@@ -10,12 +10,18 @@
     "react": "^16.4.2",
     "react-dom": "^16.4.2",
     "react-scripts": "1.1.5",
+    "reason-react": "^0.5.3",
     "url-pattern": "^1.0.3"
   },
   "scripts": {
-    "start": "react-scripts start --scripts-version react-scripts-ts",
-    "build": "react-scripts build --scripts-version react-scripts-ts",
-    "test": "react-scripts test --env=jsdom --scripts-version react-scripts-ts",
+    "start": "concurrently \"react-scripts start --scripts-version react-scripts\" \"bsb -make-world -w\" --kill-others",
+    "build": "react-scripts build --scripts-version react-scripts",
+    "test": "react-scripts test --env=jsdom --scripts-version react-scripts",
     "eject": "react-scripts eject"
+  },
+  "devDependencies": {
+    "@glennsl/bs-jest": "^0.4.4",
+    "bs-platform": "^4.0.5",
+    "concurrently": "^4.0.1"
   }
 }
