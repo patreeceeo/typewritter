@@ -1,5 +1,5 @@
 import React from 'react'
-import Container from './DataContainer'
+import Container from './PostsContainer'
 import PropTypes from 'prop-types'
 import Link from '../Link'
 import {getEditUrl, getRawContent, getTitle} from './reducer.js'

@@ -1,13 +1,108 @@
 import matter from 'gray-matter'
+import {createActions, handleActions} from 'redux-actions'
 
-export default function postsReducer(posts = [], action) {
-  switch(action.type) {
-  case 'UPDATE_POST_RAW_CONTENT': {
-    const post = getPostById(action.postId)
-    updateRawContent(post, action.content)
-  }
+export const {
+  fetchPosts,
+  fetchPostsWin,
+  fetchPostsFail,
+  updatePost,
+  updatePostWin,
+  updatePostsFail
+} = createActions({
+  FETCH_POSTS: [
+    () => (dispatch) => {
+      return fetch('/api/posts', {method: "GET"})
+        .catch((err) => {
+          dispatch(fetchPostsFail(err))
+          throw err
+        })
+        .then((response) => response.json())
+        .then((json) => {
+          const normalizedPosts = json.posts.map(normalize)
+          return dispatch(fetchPostsWin(normalizedPosts))
+        })
+    },
+    (payload) => ({ preThunkPayload: payload })
+  ],
+  FETCH_POSTS_WIN: (normalizedPosts) => ({posts: normalizedPosts}),
+  FETCH_POSTS_FAIL: (error) => error,
+  UPDATE_POST: [
+    (post) => (dispatch) => {
+      return fetch(`/api/posts/${post.id}`, {
+        method: "PUT",
+        body: JSON.stringify(denormalize(post))
+      })
+        .catch((err) => {
+          dispatch(updatePostsFail(err))
+          throw err
+        })
+        .then(() => {
+          return dispatch(updatePostWin(post))
+        })
+    },
+    (payload) => ({ preThunkPayload: payload })
+  ],
+  UPDATE_POST_WIN: (post) => ({post}),
+  UPDATE_POST_FAIL: (error) => error
+  // ADD_POST: (post = fabricatePost()) => ({post}),
+  // UPDATE_POST: (postId, post) => ({postId, post}),
+  // REMOVE_POST: (postId) => ({postId})
+})
+
+// Trying to structure state similarly to https://github.com/paularmstrong/normalizr
+
+// Returns new state object with the corresponding `post` updated
+function localUpdatePost(state, newPost) {
+  const newEntities = [...state.entities.filter(({id}) => id === newPost.id), newPost]
+  return {
+    ...state,
+    entities: newEntities
   }
 }
+
+const defaultState = {
+  fetching: false,
+  updating: false,
+  entities: []
+}
+
+export default handleActions({
+  [fetchPosts]: (state) => ({
+    ...state,
+    fetching: true
+  }),
+  [fetchPostsWin]: (state, {payload}) => ({
+    ...state,
+    entities: [...payload.posts],
+    fetching: false
+  }),
+  [fetchPostsFail]: (state, {payload}) => ({
+    ...state,
+    fetching: false,
+    error: payload
+  }),
+  [updatePost]: (state, {payload}) => ({
+    ...state,
+    updating: payload.post
+  }),
+  [updatePostWin]: (state, {payload}) => ({
+    ...localUpdatePost(state, payload.post),
+    updating: null
+  }),
+  [updatePostsFail]: (state) => ({
+    ...state,
+    updating: null
+  }),
+}, defaultState)
+
+// export default function postsReducer(posts = [], action) {
+//   switch(action.type) {
+//   case 'UPDATE_POST_RAW_CONTENT': {
+//     const post = getPostById(posts, action.postId)
+//     updateRawContent(post, action.content)
+//   }
+//   }
+// }
 
 // TODO: use Saga?
 

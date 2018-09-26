@@ -1,5 +1,5 @@
 import React from 'react'
-import Container from './DataContainer'
+import Container from './PostsContainer'
 import {getRawContent} from './reducer'
 import PropTypes from 'prop-types'
 import {goBack} from '../router'
@@ -10,7 +10,10 @@ class Presentation extends React.Component {
 
     // TODO: don't recreate this function every render
     const handleSubmit = (e) => {
-      this.props.updateRawContent(this.refTextarea.value)
+      this.props.updatePost({
+        ...post,
+        content: this.refTextarea.value
+      }).then(goBack)
       e.preventDefault()
     }
 
@@ -34,7 +37,7 @@ class Presentation extends React.Component {
 
 Presentation.propTypes = {
   post: PropTypes.object,
-  updateRawContent: PropTypes.func
+  updatePost: PropTypes.func
 }
 
 export default function EditPost(props) {

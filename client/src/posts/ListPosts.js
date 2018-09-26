@@ -1,6 +1,6 @@
 import React from 'react'
 import Link from '../Link'
-import Container from './DataContainer'
+import Container from './PostsContainer'
 import PropTypes from 'prop-types'
 import {getKey, getDetailUrl, getExerpt, getTitle} from './reducer'
 
