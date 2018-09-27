@@ -24,6 +24,7 @@ export const {
     },
     (payload) => ({ preThunkPayload: payload })
   ],
+  // TODO: maybe FETCH_POSTS_WIN should take care of normalizing?
   FETCH_POSTS_WIN: (normalizedPosts) => ({posts: normalizedPosts}),
   FETCH_POSTS_FAIL: (error) => error,
   UPDATE_POST: [
