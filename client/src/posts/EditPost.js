@@ -4,6 +4,8 @@ import {getRawContent} from './reducer'
 import PropTypes from 'prop-types'
 import {goBack} from '../router'
 
+// TODO: use TSLint?
+
 class Presentation extends React.Component {
   render() {
     const {post} = this.props
