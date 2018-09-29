@@ -12,14 +12,16 @@ export const {
   FETCH_POSTS: [
     () => (dispatch) => {
       return fetch('/api/posts', {method: "GET"})
-        .catch((err) => {
-          dispatch(fetchPostsFail(err))
-          throw err
-        })
-        .then((response) => response.json())
-        .then((json) => {
-          const normalizedPosts = json.posts.map(normalize)
-          return dispatch(fetchPostsWin(normalizedPosts))
+        .then((response) => {
+          if(response.ok) {
+            return response.json()
+              .then((json) => {
+                const normalizedPosts = json.posts.map(normalize)
+                return dispatch(fetchPostsWin(normalizedPosts))
+              })
+          } else {
+            return dispatch(fetchPostsFail(response))
+          }
         })
     },
     (payload) => ({ preThunkPayload: payload })
@@ -35,7 +37,7 @@ export const {
       })
         .catch((err) => {
           dispatch(updatePostsFail(err))
-          throw err
+          // throw err
         })
         .then(() => {
           return dispatch(updatePostWin(post))

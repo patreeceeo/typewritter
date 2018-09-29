@@ -25,12 +25,36 @@ describe('fetchPosts', () => {
 
     fetch.mockResponse(JSON.stringify({posts}))
 
-    _r.fetchPosts().payload(store.dispatch)
+    expect.assertions(2)
+    return _r.fetchPosts().payload(store.dispatch)
       .then((action) => {
         expect(action.type).toEqual('FETCH_POSTS_WIN')
         expect(action.payload.posts).toEqual(normalizedPosts)
       })
+  })
 
-    expect(fetch.mock.calls[0][0]).toEqual('/api/posts')
+  it('interacts with the API correctly (server error)', () => {
+    const store = mockStore({})
+
+    fetch.mockResponse(null, {status: 500})
+
+    expect.assertions(1)
+    return _r.fetchPosts().payload(store.dispatch)
+      .then((action) => {
+        expect(action.type).toEqual('FETCH_POSTS_FAIL')
+      })
+  })
+
+  it('interacts with the API correctly (client error)', () => {
+    const store = mockStore({})
+
+    fetch.mockResponse(null, {status: 400})
+
+    expect.assertions(1)
+    return _r.fetchPosts().payload(store.dispatch)
+      .then((action) => {
+        expect(action.type).toEqual('FETCH_POSTS_FAIL')
+      })
   })
 })
+
