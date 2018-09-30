@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 export default function Link(props) {
 
   // TODO: don't recreate this function every render
-  const onClick = (event)=> {
+  const onClick = (event) => {
     event.preventDefault()
     window.history.pushState(null, null, props.to)
     window.dispatchEvent(new window.PopStateEvent('popstate'))
@@ -15,5 +15,5 @@ export default function Link(props) {
 
 Link.propTypes = {
   children: PropTypes.node,
-  to: PropTypes.string
+  to: PropTypes.string,
 }

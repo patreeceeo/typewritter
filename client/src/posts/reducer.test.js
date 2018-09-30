@@ -16,7 +16,7 @@ describe('fetchPosts', () => {
   it('interacts with the API correctly (happy case)', () => {
     const posts = [
       _r.denormalize(_r.fabricatePost(1)),
-      _r.denormalize(_r.fabricatePost(2))
+      _r.denormalize(_r.fabricatePost(2)),
     ]
 
     const normalizedPosts = posts.map(_r.normalize)

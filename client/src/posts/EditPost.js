@@ -6,6 +6,7 @@ import {goBack} from '../router'
 
 // TODO: use TSLint?
 
+
 class Presentation extends React.Component {
   render() {
     const {post} = this.props
@@ -14,7 +15,7 @@ class Presentation extends React.Component {
     const handleSubmit = (e) => {
       this.props.updatePost({
         ...post,
-        content: this.refTextarea.value
+        content: this.refTextarea.value,
       }).then(goBack)
       e.preventDefault()
     }
@@ -26,7 +27,8 @@ class Presentation extends React.Component {
     return post ? (
       <form onSubmit={handleSubmit}>
         <textarea
-          defaultValue={getRawContent(post)} ref={(el) => this.refTextarea = el}
+          defaultValue={getRawContent(post)}
+          ref={(el) => this.refTextarea = el}
         />
         <button>save</button>
         <button type='button' onClick={handleCancel}>cancel</button>
@@ -39,7 +41,7 @@ class Presentation extends React.Component {
 
 Presentation.propTypes = {
   post: PropTypes.object,
-  updatePost: PropTypes.func
+  updatePost: PropTypes.func,
 }
 
 export default function EditPost(props) {

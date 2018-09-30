@@ -15,7 +15,7 @@ class ErrorBoundary extends React.Component {
     this.setState({
       hasError: true,
       errorMessage: error.toString(),
-      componentStack: info.componentStack
+      componentStack: info.componentStack,
     })
     // TODO: log the error to an error reporting service
   }
@@ -24,7 +24,7 @@ class ErrorBoundary extends React.Component {
     if (this.state.hasError) {
       return [
         <h1 key="message">{this.state.errorMessage}</h1>,
-        <pre key="stack">{this.state.componentStack}</pre>
+        <pre key="stack">{this.state.componentStack}</pre>,
       ]
     }
     return this.props.children
@@ -32,7 +32,7 @@ class ErrorBoundary extends React.Component {
 }
 
 ErrorBoundary.propTypes = {
-  children: PropTypes.node
+  children: PropTypes.node,
 }
 
 class Presentation extends React.Component {
@@ -51,11 +51,11 @@ class Presentation extends React.Component {
 }
 
 Presentation.propTypes = {
-  post: PropTypes.object
+  post: PropTypes.object,
 }
 
 
-export default function PostDetail (props) {
+export default function PostDetail(props) {
   return <ErrorBoundary>
     <Container {...props}>
       <Presentation/>

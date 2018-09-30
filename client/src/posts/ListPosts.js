@@ -25,10 +25,10 @@ class Presentation extends React.Component {
 }
 
 Presentation.propTypes = {
-  posts: PropTypes.array
+  posts: PropTypes.array,
 }
 
-export default function ListPosts (props) {
+export default function ListPosts(props) {
   return <Container {...props} ><Presentation/></Container>
 }
 

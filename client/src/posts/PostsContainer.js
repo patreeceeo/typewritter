@@ -22,10 +22,10 @@ class PostsContainer extends React.Component {
 
     const childProps = typeof(this.props.postId) !== 'undefined' ? {
       post,
-      ...otherProps
+      ...otherProps,
     } : {
       posts,
-      ...otherProps
+      ...otherProps,
     }
 
     return this.props.fetching ? <Loading/> : React.cloneElement(children, childProps)
@@ -39,15 +39,16 @@ PostsContainer.propTypes = {
   fetchPosts: PropTypes.func,
   updatePost: PropTypes.func,
   fetching: PropTypes.bool,
-  updating: PropTypes.oneOfType([PropTypes.bool, PropTypes.object])
+  updating: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]),
 }
+
 
 export default connect(
   (state) => state.posts,
   (dispatch) => ({
     fetchPosts: () => dispatch(fetchPosts()),
     updatePost: (post) => dispatch(updatePost(post)),
-  })
+  }),
 )(PostsContainer)
 
 
