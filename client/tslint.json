@@ -1,39 +1,43 @@
 {
-    "defaultSeverity": "error",
-    "extends": [
-        "tslint:recommended",
-        "tslint-react"
-    ],
-    "tsRules": {},
-    "rules": {
-      "object-literal-sort-keys": {
-        "severity": "off"
-      },
-      "object-literal-shorthand": {
-        "severity": "off"
-      },
-      "quotemark": {
-        "severity": "off"
-      },
-      "semicolon": {
-        "options": "never",
-        "severity": "warning"
-      },
-      "no-consecutive-blank-lines": {
-        "severity": "off"
-      },
-      "jsx-alignment": {
-        "severity": "warning"
-      },
-      "jsx-no-lambda": true,
-      "jsx-no-string-ref": true,
-      "jsx-self-close": {
-        "severity": "warning"
-      },
-      "jsx-equals-spacing": {
-        "severity": "warning",
-        "options": "never"
-      }
+  "extends": ["tslint:recommended", "tslint-react", "tslint-config-prettier"],
+  "linterOptions": {
+    "exclude": [
+      "config/**/*.js",
+      "node_modules/**/*.ts",
+      "coverage/lcov-report/*.js"
+    ]
+  },
+  "rules": {
+    "ordered-imports": {
+      "severity": "off"
     },
-    "rulesDirectory": []
+    "object-literal-sort-keys": {
+      "severity": "off"
+    },
+    "object-literal-shorthand": {
+      "severity": "off"
+    },
+    "quotemark": {
+      "severity": "off"
+    },
+    "semicolon": {
+      "options": "never",
+      "severity": "warning"
+    },
+    "no-consecutive-blank-lines": {
+      "severity": "off"
+    },
+    "jsx-alignment": {
+      "severity": "warning"
+    },
+    "jsx-no-lambda": true,
+    "jsx-no-string-ref": true,
+    "jsx-self-close": {
+      "severity": "warning"
+    },
+    "jsx-equals-spacing": {
+      "severity": "warning",
+      "options": "never"
+    }
+  }
 }

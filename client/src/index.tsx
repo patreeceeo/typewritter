@@ -12,14 +12,14 @@ const store = createStore(
   applyMiddleware(FsaThunk),
 )
 
-renderApp(window.location.pathname) //render page the first time
+renderApp(window.location.pathname) // render page the first time
 
-window.addEventListener('popstate', function() {
-  //render page when path changes
+window.addEventListener('popstate', () => {
+  // render page when path changes
   renderApp(window.location.pathname)
 })
 
-function renderApp(path) {
+function renderApp(path: string) {
   ReactDOM.render(
     <Provider store={store}>
       <App path={path}/>

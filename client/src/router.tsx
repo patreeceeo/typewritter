@@ -5,7 +5,9 @@ import EditPost from './posts/EditPost'
 import UrlPattern from 'url-pattern'
 
 class UrlParser {
-  constructor(byName) {
+  private byName: {[key: string]: UrlPattern}
+
+  constructor(byName: {[key: string]: string}) {
     this.byName = Object.entries(byName).reduce((memo, [name, pattern]) => {
       return {
         ...memo,
@@ -14,8 +16,8 @@ class UrlParser {
     }, {})
   }
 
-  parse(path) {
-    for (let [name, pattern] of Object.entries(this.byName)) {
+  public parse(path: string): {name: string, matches: {[key: string]: string}} | undefined {
+    for (const [name, pattern] of Object.entries(this.byName)) {
       const matches = pattern.match(path)
       if (matches !== null) {
         return {
@@ -24,6 +26,8 @@ class UrlParser {
         }
       }
     }
+
+    return
   }
 }
 
@@ -36,20 +40,38 @@ const urlParser = new UrlParser({
 
 // Based on https://medium.com/@daveford/react-router-alternative-switch-acd7961f08db
 
-// TODO: use route string parsing library?
+const parserForMatch = {
+  postId: (postId) => parseInt(postId, 10)
+}
+
 const parsePath = (path) => {
-  return urlParser.parse(path)
+  const parsed = urlParser.parse(path)
+  if(parsed) {
+    return {
+      name: parsed.name,
+      matches: Object.entries(parsed.matches).reduce((memo, [key, value]) => {
+        return {...memo, [key]: parserForMatch[key](value)}
+      }, {})
+    }
+  }
+
+  return
 }
 
 export default function router(props) {
-  const { name, matches } = parsePath(props.path)
-  switch (name) {
+  const parsed = parsePath(props.path)
+
+  if(!parsed) {
+    return "Error parsing path"
+  }
+
+  switch (parsed.name) {
   case 'postIndex':
     return <ListPosts/>
   case 'postDetail':
-    return <ViewPost {...matches}/>
+    return <ViewPost {...parsed.matches}/>
   case 'postEdit':
-    return <EditPost {...matches}/>
+    return <EditPost {...parsed.matches}/>
   default:
     return "Not found"
   }

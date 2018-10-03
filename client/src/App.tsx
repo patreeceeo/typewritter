@@ -1,9 +1,13 @@
-import React, { Component } from 'react'
+import React from 'react'
 import './App.css'
 import router from './router'
 
-class App extends Component {
-  render() {
+interface IProps {
+  path: string
+}
+
+class App extends React.Component<IProps> {
+  public render() {
     return (
       <div className="App">
         {router(this.props)}

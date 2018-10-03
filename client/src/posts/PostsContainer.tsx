@@ -1,24 +1,32 @@
 import React from 'react'
-import PropTypes from 'prop-types'
-import {getPostById, fetchPosts, updatePost} from './reducer.js'
+import {getPostById, fetchPosts, updatePost, INormalizedPost} from './reducer'
 import {connect} from 'react-redux'
 
 function Loading() {
   return <div>Loading&hellip;</div>
 }
 
-class PostsContainer extends React.Component {
+interface IProps {
+  entities: INormalizedPost[],
+  fetchPosts: () => {},
+  updating?: INormalizedPost,
+  postId: INormalizedPost["id"],
+  fetching: boolean,
+  children: (props: {[key: string]:any}) => React.ReactElement<any>
+}
+
+class PostsContainer extends React.Component<IProps>{
   constructor(props) {
     super(props)
 
     this.props.fetchPosts()
   }
 
-  render() {
+  public render() {
     const {children, entities: posts, ...otherProps} = this.props
     const post = this.props.updating && this.props.updating.id === this.props.postId ?
       this.props.updating
-      : getPostById(posts, parseInt(this.props.postId, 10))
+      : getPostById(posts, this.props.postId)
 
     const childProps = typeof(this.props.postId) !== 'undefined' ? {
       post,
@@ -28,18 +36,8 @@ class PostsContainer extends React.Component {
       ...otherProps,
     }
 
-    return this.props.fetching ? <Loading/> : React.cloneElement(children, childProps)
+    return this.props.fetching ? <Loading/> : children ? children(childProps) : "No presentation component provided"
   }
-}
-
-PostsContainer.propTypes = {
-  children: PropTypes.node,
-  postId: PropTypes.string,
-  entities: PropTypes.array,
-  fetchPosts: PropTypes.func,
-  updatePost: PropTypes.func,
-  fetching: PropTypes.bool,
-  updating: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]),
 }
 
 

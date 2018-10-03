@@ -2,6 +2,13 @@ import matter from "gray-matter"
 import {createActions, handleActions} from "redux-actions"
 
 
+export interface INormalizedPost {
+  title: string,
+  content: string,
+  id: number,
+}
+
+
 export const {
   fetchPosts,
   fetchPostsWin,
@@ -11,7 +18,7 @@ export const {
   updatePostsFail,
 } = createActions({
   FETCH_POSTS: [
-    () => (dispatch) => {
+    () => (dispatch: any) => {
       return fetch('/api/posts', {method: "GET"})
         .then((response) => {
           if (response.ok) {
@@ -25,7 +32,7 @@ export const {
           }
         })
     },
-    (payload) => ({ preThunkPayload: payload }),
+    (payload: any) => ({ preThunkPayload: payload }),
   ],
   // TODO: maybe FETCH_POSTS_WIN should take care of normalizing?
   FETCH_POSTS_WIN: (normalizedPosts) => ({posts: normalizedPosts}),
@@ -130,12 +137,6 @@ export function denormalize({title, content, ...stuff}) {
     post_with_metadata: matter.stringify(content, {title}),
     ...stuff,
   }
-}
-
-interface INormalizedPost {
-  title: string,
-  content: string,
-  id: number,
 }
 
 export function fabricatePost(id: number): INormalizedPost {

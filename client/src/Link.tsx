@@ -6,8 +6,8 @@ export default function Link(props) {
   // TODO: don't recreate this function every render
   const onClick = (event) => {
     event.preventDefault()
-    window.history.pushState(null, null, props.to)
-    window.dispatchEvent(new window.PopStateEvent('popstate'))
+    window.history.pushState('', '', props.to)
+    window.dispatchEvent(new PopStateEvent('popstate'))
   }
 
   return <a href={props.to} onClick={onClick}>{props.children}</a>

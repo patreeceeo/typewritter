@@ -2,8 +2,12 @@ import * as _r from './reducer'
 import {isFSA} from 'flux-standard-action'
 import configureMockStore from 'redux-mock-store'
 import FsaThunk from 'fsa-redux-thunk'
+// this import just makes typescript happy...
+// `global.fetch` is set up in ./setupTests
+import fetch from 'jest-fetch-mock'
 
 const mockStore = configureMockStore([FsaThunk])
+
 
 describe('fetchPosts', () => {
   it('is an FSA-compliant Thunk action creator', () => {
@@ -36,7 +40,7 @@ describe('fetchPosts', () => {
   it('interacts with the API correctly (server error)', () => {
     const store = mockStore({})
 
-    fetch.mockResponse(null, {status: 500})
+    fetch.mockResponse("oops", {status: 500})
 
     expect.assertions(1)
     return _r.fetchPosts().payload(store.dispatch)
@@ -48,7 +52,7 @@ describe('fetchPosts', () => {
   it('interacts with the API correctly (client error)', () => {
     const store = mockStore({})
 
-    fetch.mockResponse(null, {status: 400})
+    fetch.mockResponse("oh no you didn't", {status: 400})
 
     expect.assertions(1)
     return _r.fetchPosts().payload(store.dispatch)
