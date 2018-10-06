@@ -2,6 +2,11 @@ import matter from "gray-matter"
 import {createActions, handleActions} from "redux-actions"
 
 
+export interface IServerPost {
+  post_with_metadata: string,
+  id: number,
+}
+
 export interface INormalizedPost {
   title: string,
   content: string,
@@ -55,7 +60,7 @@ export const {
   ],
   UPDATE_POST_WIN: (post) => ({post}),
   UPDATE_POST_FAIL: (error) => error,
-  // ADD_POST: (post = fabricatePost()) => ({post}),
+  // ADD_POST: (post = normalize(fabricatePost())) => ({post}),
   // UPDATE_POST: (postId, post) => ({postId, post}),
   // REMOVE_POST: (postId) => ({postId})
 })
@@ -106,14 +111,6 @@ export default handleActions({
   }),
 }, defaultState)
 
-// export default function postsReducer(posts = [], action) {
-//   switch(action.type) {
-//   case 'UPDATE_POST_RAW_CONTENT': {
-//     const post = getPostById(posts, action.postId)
-//     updateRawContent(post, action.content)
-//   }
-//   }
-// }
 
 // TODO: use Saga?
 
@@ -132,17 +129,19 @@ export function normalize({post_with_metadata, ...post}) {
   }
 }
 
-export function denormalize({title, content, ...stuff}) {
+export function denormalize({title, content, id, ...stuff}): IServerPost {
   return {
+    id,
     post_with_metadata: matter.stringify(content, {title}),
     ...stuff,
   }
 }
 
-export function fabricatePost(id: number): INormalizedPost {
+export function fabricatePost(id: number): IServerPost {
   return {
-    title: "This is the title",
-    content: "This is some content",
+    post_with_metadata: matter.stringify("This is some content", {
+      title: "This is the title",
+    }),
     id: id,
   }
 }
