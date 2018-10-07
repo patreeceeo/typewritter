@@ -22,8 +22,8 @@ describe('fetchPosts', () => {
 
   it('interacts with the API correctly (happy case)', () => {
     const posts = [
-      _r.fabricatePost(1),
-      _r.fabricatePost(2),
+      _r.fabricatePost(),
+      _r.fabricatePost(),
     ]
 
     const normalizedPosts = posts.map(_r.normalize)
@@ -36,7 +36,7 @@ describe('fetchPosts', () => {
     return _r.fetchPosts().payload(store.dispatch)
       .then((action) => {
         expect(action.type).toEqual('FETCH_POSTS_WIN')
-        expect(action.payload.posts).toEqual(normalizedPosts)
+        expect(action.payload.posts).toEqual(JSON.parse(JSON.stringify(normalizedPosts)))
       })
   })
 

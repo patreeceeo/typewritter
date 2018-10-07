@@ -4,13 +4,13 @@ import {createActions, handleActions} from "redux-actions"
 
 export interface IServerPost {
   post_with_metadata: string,
-  id: number,
+  id: PostId,
 }
 
 export interface INormalizedPost {
   title: string,
   content: string,
-  id: number,
+  id: PostId,
 }
 
 
@@ -60,12 +60,30 @@ export const {
   ],
   UPDATE_POST_WIN: (post) => ({post}),
   UPDATE_POST_FAIL: (error) => error,
-  // ADD_POST: (post = normalize(fabricatePost())) => ({post}),
+  ADD_POST: (post = normalize(fabricatePost())) => ({post}),
   // UPDATE_POST: (postId, post) => ({postId, post}),
   // REMOVE_POST: (postId) => ({postId})
 })
 
 // Trying to structure state similarly to https://github.com/paularmstrong/normalizr
+
+class PostId {
+  private static currentId: number = 0
+  private value: number
+
+  constructor(value = PostId.currentId) {
+    this.value = value
+    PostId.currentId++
+  }
+
+  public valueOf() {
+    return this.value
+  }
+
+  public toJSON() {
+    return this.value
+  }
+}
 
 // Returns new state object with the corresponding `post` updated
 function localUpdatePost(state, newPost) {
@@ -120,11 +138,17 @@ export function getPostById(posts, postId) {
 }
 
 // specific functions
-export function normalize({post_with_metadata, ...post}) {
+export function normalize({post_with_metadata, id, ...post}): INormalizedPost {
   const parsed = matter(post_with_metadata)
+
+  interface IData {
+    title: string
+  }
+
   return {
     ...post,
-    ...parsed.data,
+    title: (parsed.data as IData).title,
+    id,
     content: parsed.content,
   }
 }
@@ -137,9 +161,9 @@ export function denormalize({title, content, id, ...stuff}): IServerPost {
   }
 }
 
-export function fabricatePost(id: number): IServerPost {
+export function fabricatePost(id: PostId = new PostId()): IServerPost {
   return {
-    post_with_metadata: matter.stringify("This is some content", {
+    post_with_metadata: matter.stringify("And the content", {
       title: "This is the title",
     }),
     id: id,
