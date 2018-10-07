@@ -20,7 +20,7 @@ export const {
   fetchPostsFail,
   updatePost,
   updatePostWin,
-  updatePostsFail,
+  updatePostFail,
 } = createActions({
   FETCH_POSTS: [
     () => (dispatch: any) => {
@@ -48,12 +48,12 @@ export const {
         method: "PUT",
         body: JSON.stringify(denormalize(post)),
       })
-        .catch((err) => {
-          dispatch(updatePostsFail(err))
-          // throw err
-        })
-        .then(() => {
-          return dispatch(updatePostWin(post))
+        .then((response) => {
+          if (response.ok) {
+            return dispatch(updatePostWin())
+          } else {
+            return dispatch(updatePostFail(response))
+          }
         })
     },
     (payload) => ({ preThunkPayload: payload }),
@@ -105,7 +105,7 @@ export default handleActions({
     ...localUpdatePost(state, payload.post),
     updating: null,
   }),
-  [updatePostsFail]: (state) => ({
+  [updatePostFail]: (state) => ({
     ...state,
     updating: null,
   }),

@@ -78,11 +78,59 @@ describe('updatePost', () => {
 
     fetch.mockResponse("bing!", {status: 200})
 
+    const post = {
+      id: 1,
+      title: "Here be the title",
+      content: "And the content"
+    }
+
     expect.assertions(2)
-    return _r.updatePost(_r.normalize(_r.fabricatePost(1))).payload(store.dispatch)
+    return _r.updatePost(post).payload(store.dispatch)
       .then((action) => {
         expect(action.type).toEqual('UPDATE_POST_WIN')
-        expect(fetch.mock.calls[0][0]).toEqual('/api/posts/1')
+        expect(fetch).toBeCalledWith(
+          '/api/posts/1',
+          {
+            method: 'PUT',
+            body: JSON.stringify(_r.denormalize(post))
+          }
+        )
+      })
+  })
+
+  it('interacts with the API correctly (server error)', () => {
+    const store = mockStore({})
+
+    fetch.mockResponse("oops", {status: 500})
+
+    const post = {
+      id: 1,
+      title: "Here be the title",
+      content: "And the content"
+    }
+
+    expect.assertions(1)
+    return _r.updatePost(post).payload(store.dispatch)
+      .then((action) => {
+        expect(action.type).toEqual('UPDATE_POST_FAIL')
+      })
+  })
+
+  it('interacts with the API correctly (client error)', () => {
+    const store = mockStore({})
+
+    fetch.mockResponse("oh no you didn't", {status: 400})
+
+    const post = {
+      id: 1,
+      title: "Here be the title",
+      content: "And the content"
+    }
+
+    expect.assertions(1)
+    return _r.updatePost(post).payload(store.dispatch)
+      .then((action) => {
+        expect(action.type).toEqual('UPDATE_POST_FAIL')
       })
   })
 })
