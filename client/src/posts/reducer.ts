@@ -21,6 +21,9 @@ export const {
   updatePost,
   updatePostWin,
   updatePostFail,
+  addPost,
+  addPostWin,
+  addPostFail,
 } = createActions({
   FETCH_POSTS: [
     () => (dispatch: any) => {
@@ -60,7 +63,28 @@ export const {
   ],
   UPDATE_POST_WIN: (post) => ({post}),
   UPDATE_POST_FAIL: (error) => error,
-  ADD_POST: (post = normalize(fabricatePost())) => ({post}),
+  ADD_POST: [
+    (post = normalize(fabricatePost())) => (dispatch) => {
+      return fetch(`/api/posts`, {
+        method: "POST",
+        body: JSON.stringify(
+          [
+            denormalize(post)
+          ]
+        ),
+      })
+        .then((response) => {
+          if (response.ok) {
+            return dispatch(addPostWin())
+          } else {
+            return dispatch(addPostFail(response))
+          }
+        })
+    },
+    (payload) => ({ preThunkPayload: payload }),
+  ],
+  ADD_POST_WIN: (post) => ({post}),
+  ADD_POST_FAIL: (error) => error,
   // UPDATE_POST: (postId, post) => ({postId, post}),
   // REMOVE_POST: (postId) => ({postId})
 })
