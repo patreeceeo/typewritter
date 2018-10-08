@@ -20,6 +20,20 @@ describe('fetchPosts', () => {
     expect(typeof(action.payload)).toBe('function')
   })
 
+  it('updates the application state', () => {
+    const state = {
+      fetching: false,
+    }
+
+    const action = _r.fetchPosts()
+
+    const nextState = _r.default(state, action)
+
+    expect(nextState).toEqual({
+      fetching: true,
+    })
+  })
+
   it('interacts with the API correctly (happy case)', () => {
     const posts = [
       _r.fabricatePost(),
@@ -95,6 +109,26 @@ describe('updatePost', () => {
     const action = _r.updatePost()
     expect(isFSA(action)).toBe(true)
     expect(typeof(action.payload)).toBe('function')
+  })
+
+  it('updates the application state', () => {
+    const state = {
+      updating: null,
+    }
+
+    const post = _r.normalize(_r.fabricatePost())
+
+    const action = {
+      type: "UPDATE_POST",
+      payload: post,
+    }
+
+    const nextState = _r.default(state, action)
+
+    expect(nextState).toEqual({
+      updating: post,
+    })
+
   })
 
   it('interacts with the API correctly (happy case)', () => {

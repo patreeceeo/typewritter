@@ -56,7 +56,7 @@ export const {
       })
         .then((response) => {
           if (response.ok) {
-            return dispatch(updatePostWin())
+            return dispatch(updatePostWin(post))
           } else {
             return dispatch(updatePostFail(response))
           }
@@ -159,7 +159,7 @@ const reducer: (state: any, action: any) => any = handleActions({
   }),
   [updatePost]: (state, {payload}) => ({
     ...state,
-    updating: payload.post,
+    updating: payload,
   }),
   [updatePostWin]: (state, {payload}) => ({
     ...localUpdatePost(state, payload.post),

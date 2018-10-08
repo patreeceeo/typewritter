@@ -8,6 +8,15 @@
     ]
   },
   "rules": {
+    "only-arrow-functions": {
+      "severity": "off"
+    },
+    "no-debugger": {
+      "severity": "warning"
+    },
+    "no-console": {
+      "severity": "warning"
+    },
     "ordered-imports": {
       "severity": "off"
     },
