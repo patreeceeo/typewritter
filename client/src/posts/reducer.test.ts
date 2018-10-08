@@ -65,6 +65,30 @@ describe('fetchPosts', () => {
   })
 })
 
+describe('fetchPostsWin', () => {
+  it('updates the application state', () => {
+    const state = {
+      fetching: true,
+      entities: []
+    }
+
+    const posts = [
+      _r.fabricatePost(),
+      _r.fabricatePost(),
+      _r.fabricatePost(),
+    ].map(_r.normalize)
+
+    const action = _r.fetchPostsWin(posts)
+
+    const nextState = _r.default(state, action)
+
+    expect(nextState).toEqual({
+      fetching: false,
+      entities: posts
+    })
+  })
+})
+
 describe('updatePost', () => {
   it('is an FSA-compliant Thunk action creator', () => {
     expect(typeof(_r.updatePost)).toEqual('function')

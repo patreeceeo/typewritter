@@ -142,7 +142,7 @@ const defaultState = {
   entities: [],
 }
 
-export default handleActions({
+const reducer: (state: any, action: any) => any = handleActions({
   [fetchPosts]: (state) => ({
     ...state,
     fetching: true,
@@ -171,6 +171,7 @@ export default handleActions({
   }),
 }, defaultState)
 
+export default reducer
 
 // TODO: use Saga?
 
