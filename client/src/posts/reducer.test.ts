@@ -210,3 +210,59 @@ describe('addPost', () => {
   })
 })
 
+describe('removePost', () => {
+  it('is an FSA-compliant Thunk action creator', () => {
+    expect(typeof(_r.removePost)).toEqual('function')
+    const action = _r.removePost()
+    expect(isFSA(action)).toBe(true)
+    expect(typeof(action.payload)).toBe('function')
+  })
+
+  it('interacts with the API correctly (happy case)', () => {
+    const store = mockStore({})
+
+    fetch.mockResponse("nom nom nom", {status: 200})
+
+    const post = _r.normalize(_r.fabricatePost())
+
+    expect.assertions(2)
+    return _r.removePost(post).payload(store.dispatch)
+      .then((action) => {
+        expect(action.type).toEqual('REMOVE_POST_WIN')
+        expect(fetch).toBeCalledWith(
+          `/api/posts/${post.id}`,
+          {
+            method: 'DELETE',
+          }
+        )
+      })
+  })
+
+  it('interacts with the API correctly (server error)', () => {
+    const store = mockStore({})
+
+    fetch.mockResponse("oops", {status: 500})
+
+    const post = _r.normalize(_r.fabricatePost())
+
+    expect.assertions(1)
+    return _r.removePost(post).payload(store.dispatch)
+      .then((action) => {
+        expect(action.type).toEqual('REMOVE_POST_FAIL')
+      })
+  })
+
+  it('interacts with the API correctly (client error)', () => {
+    const store = mockStore({})
+
+    fetch.mockResponse("oh no you didn't", {status: 400})
+
+    const post = _r.normalize(_r.fabricatePost())
+
+    expect.assertions(1)
+    return _r.removePost(post).payload(store.dispatch)
+      .then((action) => {
+        expect(action.type).toEqual('REMOVE_POST_FAIL')
+      })
+  })
+})

@@ -24,6 +24,9 @@ export const {
   addPost,
   addPostWin,
   addPostFail,
+  removePost,
+  removePostWin,
+  removePostFail,
 } = createActions({
   FETCH_POSTS: [
     () => (dispatch: any) => {
@@ -85,8 +88,23 @@ export const {
   ],
   ADD_POST_WIN: (post) => ({post}),
   ADD_POST_FAIL: (error) => error,
-  // UPDATE_POST: (postId, post) => ({postId, post}),
-  // REMOVE_POST: (postId) => ({postId})
+  REMOVE_POST: [
+    (post) => (dispatch) => {
+      return fetch(`/api/posts/${post.id}`, {
+        method: "DELETE",
+      })
+        .then((response) => {
+          if (response.ok) {
+            return dispatch(removePostWin(post))
+          } else {
+            return dispatch(removePostFail(response))
+          }
+        })
+    },
+    (payload) => ({ preThunkPayload: payload }),
+  ],
+  REMOVE_POST_WIN: (post) => ({post}),
+  REMOVE_POST_FAIL: (error) => error,
 })
 
 // Trying to structure state similarly to https://github.com/paularmstrong/normalizr
