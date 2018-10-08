@@ -127,12 +127,23 @@ class PostId {
   }
 }
 
+function arrayReplace(array, index, newElement) {
+  return [...array.slice(0, index), newElement, ...array.slice(index + 1)]
+}
+
 // Returns new state object with the corresponding `post` updated
 function localUpdatePost(state, newPost) {
-  const newEntities = [...state.entities.filter(({id}) => id === newPost.id), newPost]
-  return {
-    ...state,
-    entities: newEntities,
+  const index = state.entities.findIndex(isSamePost(newPost))
+
+  if(index >= 0) {
+    const value = {
+      ...state,
+      entities: arrayReplace(state.entities, index, newPost),
+    }
+    return value
+  } else {
+    // TODO: track error
+    return state
   }
 }
 
@@ -242,4 +253,8 @@ export function getEditUrl(post) {
   return `/posts/${post.id}/edit`
 }
 
-
+export function isSamePost(post) {
+  return (otherPost) => {
+    return post.id.valueOf() === otherPost.id.valueOf()
+  }
+}

@@ -193,6 +193,37 @@ describe('updatePost', () => {
   })
 })
 
+describe('updatePostWin', () => {
+  it('updates the application state', () => {
+    const priorPost = _r.normalize(_r.fabricatePost())
+    const post = _r.normalize(_r.fabricatePost())
+    const nextPost = _r.normalize(_r.fabricatePost())
+    const updatedPost = {...post, title: "You'll never believe..."}
+
+    const state = {
+      updating: updatedPost,
+      entities: [
+        priorPost,
+        post,
+        nextPost,
+      ]
+    }
+
+    const action = _r.updatePostWin(updatedPost)
+
+    const nextState = _r.default(state, action)
+
+    expect(nextState).toEqual({
+      updating: null,
+      entities: [
+        priorPost,
+        updatedPost,
+        nextPost,
+      ]
+    })
+  })
+})
+
 
 describe('addPost', () => {
   it('is an FSA-compliant Thunk action creator', () => {
