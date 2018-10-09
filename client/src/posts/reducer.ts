@@ -1,9 +1,32 @@
 import matter from "gray-matter"
 import {createActions, handleActions} from "redux-actions"
 
+class PostId {
+  public static setCounter(count) {
+    this.currentId = count
+  }
+
+  private static currentId: number = 0
+
+  private value: number
+
+  constructor(value = PostId.currentId++) {
+    debugger
+    this.value = value
+  }
+
+  public valueOf() {
+    return this.value
+  }
+
+  public toJSON() {
+    return this.value
+  }
+}
 
 export interface IServerPost {
   post_with_metadata: string,
+  file_path: string,
   id: PostId,
 }
 
@@ -35,6 +58,7 @@ export const {
           if (response.ok) {
             return response.json()
               .then((json) => {
+                PostId.setCounter(json.posts.length)
                 const normalizedPosts = json.posts.map(normalize)
                 return dispatch(fetchPostsWin(normalizedPosts))
               })
@@ -109,23 +133,6 @@ export const {
 
 // Trying to structure state similarly to https://github.com/paularmstrong/normalizr
 
-class PostId {
-  private static currentId: number = 0
-  private value: number
-
-  constructor(value = PostId.currentId) {
-    this.value = value
-    PostId.currentId++
-  }
-
-  public valueOf() {
-    return this.value
-  }
-
-  public toJSON() {
-    return this.value
-  }
-}
 
 function arrayReplace(array, index, newElement) {
   return [...array.slice(0, index), newElement, ...array.slice(index + 1)]
@@ -237,6 +244,7 @@ export function denormalize({title, content, id, ...stuff}): IServerPost {
   return {
     id,
     post_with_metadata: matter.stringify(content, {title}),
+    file_path: stuff.file_path,
     ...stuff,
   }
 }
@@ -247,6 +255,7 @@ export function fabricatePost(id: PostId = new PostId()): IServerPost {
       title: "This is the title",
     }),
     id: id,
+    file_path: `${id}.md`
   }
 }
 

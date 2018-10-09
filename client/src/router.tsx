@@ -66,17 +66,26 @@ export default function router(props) {
   }
 
   switch (parsed.name) {
-  case 'postIndex':
-    return <ListPosts/>
-  case 'postDetail':
-    return <ViewPost {...parsed.matches}/>
-  case 'postEdit':
-    return <EditPost {...parsed.matches}/>
-  default:
-    return "Not found"
+    case 'postIndex': {
+      return <ListPosts/>
+    }
+    case 'postDetail': {
+      return <ViewPost {...parsed.matches}/>
+    }
+    case 'postEdit': {
+      return <EditPost {...parsed.matches}/>
+    }
+    default: {
+      return "Not found"
+    }
   }
 }
 
 export function goBack() {
   window.history.back()
+}
+
+export function goTo(state) {
+  window.history.pushState('', '', state)
+  window.dispatchEvent(new PopStateEvent('popstate'))
 }

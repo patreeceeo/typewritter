@@ -1,19 +1,28 @@
 import React from 'react'
-import PropTypes from 'prop-types'
+import {goTo} from './router'
 
-export default function Link(props) {
+export default class Link extends React.Component<{to: string, tagName?: string}> {
+  constructor(props) {
+    super(props)
 
-  // TODO: don't recreate this function every render
-  const onClick = (event) => {
-    event.preventDefault()
-    window.history.pushState('', '', props.to)
-    window.dispatchEvent(new PopStateEvent('popstate'))
+    this.handleClick = this.handleClick.bind(this)
   }
 
-  return <a href={props.to} onClick={onClick}>{props.children}</a>
+  public render() {
+    const {to, tagName, children} = this.props
+
+    switch(tagName) {
+      case "a":
+      default:
+        return <a href={to} onClick={this.handleClick}>{children}</a>
+      case "button":
+        return <button onClick={this.handleClick}>{children}</button>
+    }
+  }
+
+  private handleClick(event) {
+    event.preventDefault()
+    goTo(this.props.to)
+  }
 }
 
-Link.propTypes = {
-  children: PropTypes.node,
-  to: PropTypes.string,
-}

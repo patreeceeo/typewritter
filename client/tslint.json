@@ -8,6 +8,9 @@
     ]
   },
   "rules": {
+    "max-classes-per-file": {
+      "severity": "off"
+    },
     "only-arrow-functions": {
       "severity": "off"
     },

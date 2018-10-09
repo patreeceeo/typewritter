@@ -1,5 +1,5 @@
 import React from 'react'
-import {getPostById, fetchPosts, updatePost, INormalizedPost} from './reducer'
+import {getPostById, fetchPosts, updatePost, addPost, removePost, INormalizedPost} from './reducer'
 import {connect} from 'react-redux'
 
 function Loading() {
@@ -46,6 +46,8 @@ export default connect(
   (dispatch) => ({
     fetchPosts: () => dispatch(fetchPosts()),
     updatePost: (post) => dispatch(updatePost(post)),
+    addPost: (post) => dispatch(addPost(post)),
+    removePost: (post) => dispatch(removePost(post)),
   }),
 )(PostsContainer)
 
