@@ -299,6 +299,26 @@ describe('addPost', () => {
   })
 })
 
+describe('addPostWin', () => {
+  it('updates the application state', () => {
+    const state = {
+      entities: []
+    }
+
+    const post = _r.normalize(_r.fabricatePost())
+
+    const action = _r.addPostWin(post)
+
+    const nextState = _r.default(state, action)
+
+    expect(nextState).toEqual({
+      entities: [
+        post
+      ]
+    })
+  })
+})
+
 describe('removePost', () => {
   it('is an FSA-compliant Thunk action creator', () => {
     expect(typeof(_r.removePost)).toEqual('function')

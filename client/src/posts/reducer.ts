@@ -78,7 +78,7 @@ export const {
       })
         .then((response) => {
           if (response.ok) {
-            return dispatch(addPostWin())
+            return dispatch(addPostWin(post))
           } else {
             return dispatch(addPostFail(response))
           }
@@ -180,6 +180,10 @@ const reducer: (state: any, action: any) => any = handleActions({
     ...state,
     updating: null,
   }),
+  [addPostWin]: (state, {payload}) => ({
+    ...state,
+    entities: [...state.entities, payload.post]
+  })
 }, defaultState)
 
 export default reducer
