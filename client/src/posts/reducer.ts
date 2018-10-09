@@ -131,6 +131,10 @@ function arrayReplace(array, index, newElement) {
   return [...array.slice(0, index), newElement, ...array.slice(index + 1)]
 }
 
+function arrayRemove(array, index) {
+  return [...array.slice(0, index), ...array.slice(index + 1)]
+}
+
 // Returns new state object with the corresponding `post` updated
 function localUpdatePost(state, newPost) {
   const index = state.entities.findIndex(isSamePost(newPost))
@@ -139,6 +143,21 @@ function localUpdatePost(state, newPost) {
     const value = {
       ...state,
       entities: arrayReplace(state.entities, index, newPost),
+    }
+    return value
+  } else {
+    // TODO: track error
+    return state
+  }
+}
+
+function localRemovePost(state, post) {
+  const index = state.entities.findIndex(isSamePost(post))
+
+  if(index >= 0) {
+    const value = {
+      ...state,
+      entities: arrayRemove(state.entities, index),
     }
     return value
   } else {
@@ -183,7 +202,10 @@ const reducer: (state: any, action: any) => any = handleActions({
   [addPostWin]: (state, {payload}) => ({
     ...state,
     entities: [...state.entities, payload.post]
-  })
+  }),
+  [removePostWin]: (state, {payload}) => ({
+    ...localRemovePost(state, payload.post)
+  }),
 }, defaultState)
 
 export default reducer

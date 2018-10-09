@@ -375,3 +375,21 @@ describe('removePost', () => {
       })
   })
 })
+
+describe('removePostWin', () => {
+  it('updates the application state', () => {
+    const post = _r.normalize(_r.fabricatePost())
+
+    const state = {
+      entities: [post]
+    }
+
+    const action = _r.removePostWin(post)
+
+    const nextState = _r.default(state, action)
+
+    expect(nextState).toEqual({
+      entities: []
+    })
+  })
+})
