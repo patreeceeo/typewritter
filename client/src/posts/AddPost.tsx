@@ -1,17 +1,15 @@
 import React from 'react'
 import Container from './PostsContainer'
-import {getRawContent, INormalizedPost} from './reducer'
+import {getRawContent, INormalizedPost, fabricatePost, normalize} from './reducer'
 import {goBack} from '../router'
 
-// TODO: use async/await?
-
 interface IProps {
-  post: INormalizedPost,
-  updatePost: (INormalizedPost) => Promise<void>
+  addPost: (INormalizedPost) => Promise<void>
 }
 
 class Presentation extends React.Component<IProps> {
   private refTextarea = React.createRef<HTMLTextAreaElement>()
+  private post: INormalizedPost = normalize(fabricatePost())
 
   constructor(props) {
     super(props)
@@ -20,26 +18,23 @@ class Presentation extends React.Component<IProps> {
   }
 
   public render() {
-    const {post} = this.props
 
-    return post ? (
+    return (
       <form onSubmit={this.handleSubmit}>
         <textarea
-          defaultValue={getRawContent(post)}
+          defaultValue={getRawContent(this.post)}
           ref={this.refTextarea}
         />
         <button>save</button>
         <button type='button' onClick={this.handleCancel}>cancel</button>
       </form>
-    ) : (
-      <div>Loading post&hellip;</div>
     )
   }
 
   private handleSubmit(e) {
     if(this.refTextarea.current) {
-      this.props.updatePost({
-        ...this.props.post,
+      this.props.addPost({
+        ...this.post,
         content: this.refTextarea.current.value,
       }).then(goBack)
       e.preventDefault()
@@ -53,10 +48,14 @@ class Presentation extends React.Component<IProps> {
   }
 }
 
-export default function EditPost(props) {
+export default function AddPost(props) {
   return (
-    <Container {...props}>{({post, updatePost}) => {
-      return <Presentation post={post} updatePost={updatePost}/>
+    <Container {...props}>{({addPost}) => {
+      return (
+        <Presentation
+          addPost={addPost}
+        />
+      )
     }}</Container>
   )
 }

@@ -1,8 +1,8 @@
 import React from 'react'
 import Link from '../Link'
 import Container from './PostsContainer'
-import {getKey, getDetailUrl, getEditUrl, getExerpt, getTitle, INormalizedPost} from './reducer'
-import {goTo} from '../router'
+import {getKey, getExerpt, getTitle, INormalizedPost} from './reducer'
+import {goTo, getUrl} from '../router'
 
 // TODO: use ReactReason?!
 
@@ -17,13 +17,13 @@ class ListItem extends React.Component<{post: INormalizedPost, removePost: (post
     const {post} = this.props
     return (
       <li>
-        <Link to={getDetailUrl(post)}>{getTitle(post)}</Link>
+        <Link to={getUrl("postDetail", post)}>{getTitle(post)}</Link>
         <p>
           {getExerpt(post)}
       </p>
       <Link
         tagName="button"
-        to={getEditUrl(post)}
+        to={getUrl("postEdit", post)}
       >
         edit
       </Link>
@@ -58,18 +58,7 @@ class Presentation extends React.Component<{posts: INormalizedPost[], addPost: (
   }
 
   private handleClickAdd() {
-    this.props.addPost().then((action) => {
-
-      // TODO: why do I have to do this?
-      // e.g. why does TSC think action is an INormalizedPost?
-      interface IAction {
-        payload: {
-          post: INormalizedPost
-        }
-      }
-
-      goTo(getEditUrl((action as unknown as IAction).payload.post))
-    })
+    goTo(getUrl("postAdd"))
   }
 }
 

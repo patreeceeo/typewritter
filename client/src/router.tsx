@@ -2,6 +2,7 @@ import React from 'react'
 import ListPosts from './posts/ListPosts'
 import ViewPost from './posts/ViewPost'
 import EditPost from './posts/EditPost'
+import AddPost from './posts/AddPost'
 import UrlPattern from 'url-pattern'
 
 class UrlParser {
@@ -29,19 +30,24 @@ class UrlParser {
 
     return
   }
+
+  public stringify(name: string, valuesByKey: {[key: string]: any} = {}): string {
+    return this.byName[name].stringify(valuesByKey)
+  }
 }
 
 const urlParser = new UrlParser({
   index: "/",
   postIndex: "/posts",
-  postDetail: "/posts/:postId",
-  postEdit: "/posts/:postId/edit",
+  postDetail: "/post/:id",
+  postEdit: "/editPost/:id",
+  postAdd: "/addPost",
 })
 
 // Based on https://medium.com/@daveford/react-router-alternative-switch-acd7961f08db
 
 const parserForMatch = {
-  postId: (postId) => parseInt(postId, 10)
+  id: (id) => parseInt(id, 10)
 }
 
 const parsePath = (path) => {
@@ -75,6 +81,9 @@ export default function router(props) {
     case 'postEdit': {
       return <EditPost {...parsed.matches}/>
     }
+    case 'postAdd': {
+      return <AddPost {...parsed.matches}/>
+    }
     default: {
       return "Not found"
     }
@@ -88,4 +97,8 @@ export function goBack() {
 export function goTo(state) {
   window.history.pushState('', '', state)
   window.dispatchEvent(new PopStateEvent('popstate'))
+}
+
+export function getUrl(routeName: string, routeParams?: {[key: string]: any}): string {
+  return urlParser.stringify(routeName, routeParams)
 }

@@ -1,7 +1,8 @@
 import React from 'react'
 import Container from './PostsContainer'
 import Link from '../Link'
-import {getEditUrl, getRawContent, getTitle, INormalizedPost} from './reducer'
+import {getRawContent, getTitle, INormalizedPost} from './reducer'
+import {getUrl} from '../router'
 
 // TODO: use error boundaries?
 
@@ -16,7 +17,7 @@ class Presentation extends React.Component<IProps> {
       <div>
         <h1>{getTitle(post)}</h1>
         <pre>{getRawContent(post)}</pre>
-        <Link to={getEditUrl(post)}>edit</Link>
+        <Link to={getUrl("postEdit", post)}>edit</Link>
       </div>
     ) : (
       <div>Loading post&hellip;</div>

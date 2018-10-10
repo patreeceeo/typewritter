@@ -10,7 +10,7 @@ interface IProps {
   entities: INormalizedPost[],
   fetchPosts: () => {},
   updating?: INormalizedPost,
-  postId: INormalizedPost["id"],
+  id: INormalizedPost["id"],
   fetching: boolean,
   children: (props: {[key: string]:any}) => React.ReactElement<any>
 }
@@ -24,11 +24,11 @@ class PostsContainer extends React.Component<IProps>{
 
   public render() {
     const {children, entities: posts, ...otherProps} = this.props
-    const post = this.props.updating && this.props.updating.id === this.props.postId ?
+    const post = this.props.updating && this.props.updating.id === this.props.id ?
       this.props.updating
-      : getPostById(posts, this.props.postId)
+      : getPostById(posts, this.props.id)
 
-    const childProps = typeof(this.props.postId) !== 'undefined' ? {
+    const childProps = typeof(this.props.id) !== 'undefined' ? {
       post,
       ...otherProps,
     } : {

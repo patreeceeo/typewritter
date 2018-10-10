@@ -6,12 +6,15 @@ class PostId {
     this.currentId = count
   }
 
+  public static decrement() {
+    this.currentId--
+  }
+
   private static currentId: number = 0
 
   private value: number
 
   constructor(value = PostId.currentId++) {
-    debugger
     this.value = value
   }
 
@@ -119,6 +122,7 @@ export const {
       })
         .then((response) => {
           if (response.ok) {
+            PostId.decrement()
             return dispatch(removePostWin(post))
           } else {
             return dispatch(removePostFail(response))
@@ -278,14 +282,6 @@ export function getRawContent(post) {
 
 export function updateRawContent(post, content) {
   post.content = content
-}
-
-export function getDetailUrl(post) {
-  return `/posts/${post.id}`
-}
-
-export function getEditUrl(post) {
-  return `/posts/${post.id}/edit`
 }
 
 export function isSamePost(post) {
