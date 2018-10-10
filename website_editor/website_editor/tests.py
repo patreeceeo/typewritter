@@ -15,12 +15,12 @@ class MockPostController(object):
     def __init__(self, posts_dir_path):
         self.posts = [
             dict(
-                id=0,
+                post_id=0,
                 file_path='1.md',
                 post_with_metadata='Yes'
             ),
             dict(
-                id=1,
+                post_id=1,
                 file_path='2.md',
                 post_with_metadata='Si'
             )
@@ -64,7 +64,7 @@ class TestPostResource(unittest.TestCase):
         request = testing.DummyRequest()
         request.url = '/api/posts/0'
         request.registry = mock_registry('/path/to/posts')
-        request.matchdict = { 'id': 0 }
+        request.matchdict = { 'post_id': 0 }
         request.json_body = {
             'post_with_metadata': 'Hi!'
         }
@@ -82,7 +82,7 @@ class TestPostResource(unittest.TestCase):
         from .resources import PostResource
         request = testing.DummyRequest()
         request.url = '/api/posts/1'
-        request.matchdict = {'id': u'1'}
+        request.matchdict = {'post_id': u'1'}
         request.registry = mock_registry('/path/to/posts')
 
         info = PostResource.get(PostResource(request))
@@ -105,7 +105,7 @@ class TestPostResource(unittest.TestCase):
         request.url = '/api/posts'
         request.registry = mock_registry('/path/to/posts')
         request.matchdict = {
-                'id': 1
+                'post_id': 1
         }
 
         thing = PostResource(request)
@@ -233,7 +233,7 @@ class FunctionalTests(fake_filesystem_unittest.TestCase):
         self.assertEqual(200, res.status_int)
         self.assertEqual(1, len(res.json_body))
 
-        post_id = res.json_body['posts'][0]['id']
+        post_id = res.json_body['posts'][0]['post_id']
 
         res = self.testapp.put_json('/api/posts/%d' % post_id, {
             'file_path': '/path/to/posts/1.md',
@@ -248,7 +248,7 @@ class FunctionalTests(fake_filesystem_unittest.TestCase):
         self.assertEqual({
             'file_path': '/path/to/posts/1.md',
             'post_with_metadata': 'Hola!',
-            'id': 0
+            'post_id': 0
         }, res.json_body)
 
         res = self.testapp.delete('/api/posts/%d' % post_id)

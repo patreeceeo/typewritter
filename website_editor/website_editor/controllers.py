@@ -1,18 +1,6 @@
 from .models import load_posts, PostModel, PostCollection
 
 
-# class BaseController(object):
-
-#     def __init__(self, base_dir_path):
-#         self.base_dir_path = base_dir_path
-#         if not base_dir_path in _collection_by_path:
-#             _collection_by_path[base_dir_path] = self.create_collection(base_dir_path)
-
-#     def create_collection(self):
-#         raise NotImplemented
-
-#     def fetch(self, **search_crit):
-
 _posts_by_path = {}
 class PostController(object):
     def __init__(self, posts_dir_path):

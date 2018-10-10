@@ -30,13 +30,13 @@ class PostId {
 export interface IServerPost {
   post_with_metadata: string,
   file_path: string,
-  id: PostId,
+  post_id: PostId,
 }
 
 export interface INormalizedPost {
   title: string,
   content: string,
-  id: PostId,
+  post_id: PostId,
 }
 
 
@@ -77,7 +77,7 @@ export const {
   FETCH_POSTS_FAIL: (error) => error,
   UPDATE_POST: [
     (post) => (dispatch) => {
-      return fetch(`/api/posts/${post.id}`, {
+      return fetch(`/api/posts/${post.post_id}`, {
         method: "PUT",
         body: JSON.stringify(denormalize(post)),
       })
@@ -117,7 +117,7 @@ export const {
   ADD_POST_FAIL: (error) => error,
   REMOVE_POST: [
     (post) => (dispatch) => {
-      return fetch(`/api/posts/${post.id}`, {
+      return fetch(`/api/posts/${post.post_id}`, {
         method: "DELETE",
       })
         .then((response) => {
@@ -225,11 +225,11 @@ export default reducer
 
 // collection functions
 export function getPostById(posts, postId) {
-  return posts.filter((post) => post.id === postId)[0]
+  return posts.filter((post) => post.post_id === postId)[0]
 }
 
 // specific functions
-export function normalize({post_with_metadata, id, ...post}): INormalizedPost {
+export function normalize({post_with_metadata, post_id, ...post}): INormalizedPost {
   const parsed = matter(post_with_metadata)
 
   interface IData {
@@ -239,14 +239,14 @@ export function normalize({post_with_metadata, id, ...post}): INormalizedPost {
   return {
     ...post,
     title: (parsed.data as IData).title,
-    id,
+    post_id,
     content: parsed.content,
   }
 }
 
-export function denormalize({title, content, id, ...stuff}): IServerPost {
+export function denormalize({title, content, post_id, ...stuff}): IServerPost {
   return {
-    id,
+    post_id,
     post_with_metadata: matter.stringify(content, {title}),
     file_path: stuff.file_path,
     ...stuff,
@@ -258,13 +258,13 @@ export function fabricatePost(id: PostId = new PostId()): IServerPost {
     post_with_metadata: matter.stringify("And the content", {
       title: "This is the title",
     }),
-    id: id,
+    post_id: id,
     file_path: `${id}.md`
   }
 }
 
 export function getKey(post) {
-  return post.id
+  return post.post_id
 }
 
 export function getTitle(post) {
@@ -286,6 +286,6 @@ export function updateRawContent(post, content) {
 
 export function isSamePost(post) {
   return (otherPost) => {
-    return post.id.valueOf() === otherPost.id.valueOf()
+    return post.post_id.valueOf() === otherPost.post_id.valueOf()
   }
 }

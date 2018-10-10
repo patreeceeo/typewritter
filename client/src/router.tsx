@@ -9,10 +9,14 @@ class UrlParser {
   private byName: {[key: string]: UrlPattern}
 
   constructor(byName: {[key: string]: string}) {
+    const options = {
+      segmentNameCharset: 'a-zA-Z0-9_-'
+    }
+
     this.byName = Object.entries(byName).reduce((memo, [name, pattern]) => {
       return {
         ...memo,
-        [name]: new UrlPattern(pattern),
+        [name]: new UrlPattern(pattern, options),
       }
     }, {})
   }
@@ -39,15 +43,15 @@ class UrlParser {
 const urlParser = new UrlParser({
   index: "/",
   postIndex: "/posts",
-  postDetail: "/post/:id",
-  postEdit: "/editPost/:id",
+  postDetail: "/post/:post_id",
+  postEdit: "/editPost/:post_id",
   postAdd: "/addPost",
 })
 
 // Based on https://medium.com/@daveford/react-router-alternative-switch-acd7961f08db
 
 const parserForMatch = {
-  id: (id) => parseInt(id, 10)
+  post_id: (id) => parseInt(id, 10)
 }
 
 const parsePath = (path) => {

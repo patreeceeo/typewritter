@@ -137,7 +137,7 @@ describe('updatePost', () => {
     fetch.mockResponse("bing!", {status: 200})
 
     const post = {
-      id: 1,
+      post_id: 1,
       title: "Here be the title",
       content: "And the content"
     }
@@ -162,7 +162,7 @@ describe('updatePost', () => {
     fetch.mockResponse("oops", {status: 500})
 
     const post = {
-      id: 1,
+      post_id: 1,
       title: "Here be the title",
       content: "And the content"
     }
@@ -180,7 +180,7 @@ describe('updatePost', () => {
     fetch.mockResponse("oh no you didn't", {status: 400})
 
     const post = {
-      id: 1,
+      post_id: 1,
       title: "Here be the title",
       content: "And the content"
     }
@@ -239,7 +239,7 @@ describe('addPost', () => {
     fetch.mockResponse("bing!", {status: 200})
 
     const post = {
-      id: 1,
+      post_id: 1,
       title: "Here be the title",
       content: "And the content"
     }
@@ -268,7 +268,7 @@ describe('addPost', () => {
     fetch.mockResponse("oops", {status: 500})
 
     const post = {
-      id: 1,
+      post_id: 1,
       title: "Here be the title",
       content: "And the content"
     }
@@ -286,7 +286,7 @@ describe('addPost', () => {
     fetch.mockResponse("oh no you didn't", {status: 400})
 
     const post = {
-      id: 1,
+      post_id: 1,
       title: "Here be the title",
       content: "And the content"
     }
@@ -339,7 +339,7 @@ describe('removePost', () => {
       .then((action) => {
         expect(action.type).toEqual('REMOVE_POST_WIN')
         expect(fetch).toBeCalledWith(
-          `/api/posts/${post.id}`,
+          `/api/posts/${post.post_id}`,
           {
             method: 'DELETE',
           }

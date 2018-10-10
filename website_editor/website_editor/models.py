@@ -9,8 +9,8 @@ class PostCollection(object):
             self.add(PostModel(**data))
 
     def add(self, model):
-        model.attrs['id'] = self.length
-        self.by_id[model.attrs['id']] = model
+        model.attrs['post_id'] = self.length
+        self.by_id[model.attrs['post_id']] = model
         self.length = self.length + 1
 
     def remove(self, id):
