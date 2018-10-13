@@ -22,7 +22,7 @@ class ListItem extends React.Component<{post: INormalizedPost, removePost: (post
           {getExerpt(post)}
       </p>
       <Link
-        tagName="button"
+        type="button"
         to={getUrl("postEdit", post)}
       >
         edit

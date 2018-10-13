@@ -22,7 +22,7 @@ export const {
     (payload: any) => ({ preThunkPayload: payload }),
   ],
   START_BUILD_WIN: (payload) => payload,
-  START_BUILD_FAIL: ()=>{},
+  START_BUILD_FAIL: (error) => error,
 })
 
 const defaultState = {
@@ -32,7 +32,12 @@ const defaultState = {
 const reducer: (state: any, action: any) => any = handleActions({
   [startBuild]: (state) => ({
     ...state,
-    building: true
+    building: true,
+  }),
+  [startBuildWin]: (state,  {payload}) => ({
+    ...state,
+    building: false,
+    stdout: payload.stdout
   })
 }, defaultState)
 

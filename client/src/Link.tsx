@@ -1,7 +1,7 @@
 import React from 'react'
 import {goTo} from './router'
 
-export default class Link extends React.Component<{to: string, tagName?: string}> {
+export default class Link extends React.Component<{to: string, type?: string}> {
   constructor(props) {
     super(props)
 
@@ -9,15 +9,15 @@ export default class Link extends React.Component<{to: string, tagName?: string}
   }
 
   public render() {
-    const {to, tagName, children} = this.props
+    const {to, type, children} = this.props
 
-    switch(tagName) {
-      case "a":
-      default:
-        return <a href={to} onClick={this.handleClick}>{children}</a>
-      case "button":
-        return <button onClick={this.handleClick}>{children}</button>
+    const mapTypeToRenderer = {
+      text: () => <a href={to} onClick={this.handleClick}>{children}</a>,
+      button: () => <button onClick={this.handleClick}>{children}</button>,
     }
+
+    return mapTypeToRenderer[typeof type === 'undefined' ? 'text' : type]()
+
   }
 
   private handleClick(event) {

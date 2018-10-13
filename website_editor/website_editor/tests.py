@@ -4,12 +4,12 @@ from pyfakefs import fake_filesystem_unittest
 from pyramid import testing
 from pyramid.httpexceptions import HTTPNotFound
 
+
 class mock_registry:
     def __init__(self, posts_dir_path):
         self.settings = dict(
             posts_dir_path=posts_dir_path
         )
-
 
 class MockPostController(object):
     def __init__(self, posts_dir_path):
@@ -25,8 +25,6 @@ class MockPostController(object):
                 post_with_metadata='Si'
             )
         ]
-
-
 
     def fetch(self, filter_crit=None):
         return filter(filter_crit, self.posts)
@@ -258,4 +256,5 @@ class FunctionalTests(fake_filesystem_unittest.TestCase):
         res = self.testapp.get('/api/posts/%d' % post_id, status=404)
 
         self.assertEqual(404, res.status_int)
+
 

@@ -4,6 +4,8 @@ import ViewPost from './posts/ViewPost'
 import EditPost from './posts/EditPost'
 import AddPost from './posts/AddPost'
 import UrlPattern from 'url-pattern'
+import Dashboard from './Dashboard'
+import BuildConsole from './fitz/BuildConsole'
 
 class UrlParser {
   private byName: {[key: string]: UrlPattern}
@@ -46,6 +48,7 @@ const urlParser = new UrlParser({
   postDetail: "/post/:post_id",
   postEdit: "/editPost/:post_id",
   postAdd: "/addPost",
+  buildIndex: "/build",
 })
 
 // Based on https://medium.com/@daveford/react-router-alternative-switch-acd7961f08db
@@ -76,6 +79,9 @@ export default function router(props) {
   }
 
   switch (parsed.name) {
+    case 'index': {
+      return <Dashboard/>
+    }
     case 'postIndex': {
       return <ListPosts/>
     }
@@ -87,6 +93,9 @@ export default function router(props) {
     }
     case 'postAdd': {
       return <AddPost {...parsed.matches}/>
+    }
+    case 'buildIndex': {
+      return <BuildConsole/>
     }
     default: {
       return "Not found"

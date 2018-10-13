@@ -7,4 +7,5 @@ def main(global_config, **settings):
     config = Configurator(settings=settings)
     config.include("cornice")
     config.scan("website_editor.resources")
+    config.scan("website_editor.services")
     return config.make_wsgi_app()

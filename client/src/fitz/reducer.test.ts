@@ -73,3 +73,21 @@ describe('startBuild', () => {
       })
   })
 })
+
+
+describe('startBuildWin', () => {
+  it('updates the application state', () => {
+    const state = {
+      building: true
+    }
+
+    const action = _r.startBuildWin({stdout: "Hi"})
+
+    const nextState = _r.default(state, action)
+
+    expect(nextState).toEqual({
+      building: false,
+      stdout: "Hi"
+    })
+  })
+})
