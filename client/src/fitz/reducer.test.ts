@@ -2,15 +2,9 @@ import * as _r from './reducer'
 import {isFSA} from 'flux-standard-action'
 import configureMockStore from 'redux-mock-store'
 import FsaThunk from 'fsa-redux-thunk'
-// this import just makes typescript happy...
-// `global.fetch` is set up in ./setupTests
-import fetch from 'jest-fetch-mock'
+import xhr from '../mock-xhr'
 
 const mockStore = configureMockStore([FsaThunk])
-
-beforeEach(() => {
-  fetch.resetMocks()
-})
 
 describe('startBuild', () => {
   it('is an FSA-compliant Thunk action creator', () => {
@@ -37,57 +31,109 @@ describe('startBuild', () => {
   it('interacts with the API correctly (happy case)', () => {
     const store = mockStore({})
 
-    const stdout = "So we beat on, boats against the current, borne back ceaselessly into the past."
+    expect.assertions(1)
 
-    fetch.mockResponse(JSON.stringify({stdout}))
+    _r.startBuild().payload(store.dispatch)
 
-    expect.assertions(2)
-    return _r.startBuild().payload(store.dispatch)
-      .then((action) => {
-        expect(action.type).toEqual('START_BUILD_WIN')
-        expect(action.payload.stdout).toEqual(stdout)
-      })
+    /*
+     * The text/event-stream MIME type is very specific
+     * - There should be no blank line at the start
+     * - Each event should be separated by 1 blank line
+     * - The complete response must end with a blank line
+     * - The event field is optional, but the data field is required
+     *
+     * https://html.spec.whatwg.org/multipage/server-sent-events.html#server-sent-events
+     */
+    xhr.mockResponse([
+`event: started
+data: none
+`,
+`
+data: So we beat on,
+
+data: boats against the current,
+`,
+`
+data: borne back ceaselessly into the past.
+`,
+`
+event: finished
+data: 0
+
+`,
+    ], {
+      "Content-Type": "text/event-stream"
+    })
+
+    expect(store.getActions()).toEqual([
+      _r.startBuildWin(),
+      _r.receivedBuildMessage('So we beat on,'),
+      _r.receivedBuildMessage('boats against the current,'),
+      _r.receivedBuildMessage('borne back ceaselessly into the past.'),
+      _r.buildFinished(0),
+    ])
   })
 
   it('interacts with the API correctly (server error)', () => {
     const store = mockStore({})
 
-    fetch.mockResponse("oops", {status: 500})
-
     expect.assertions(1)
-    return _r.startBuild().payload(store.dispatch)
-      .then((action) => {
-        expect(action.type).toEqual('START_BUILD_FAIL')
-      })
+    _r.startBuild().payload(store.dispatch)
+
+    xhr.mockResponse(["oops"], {status: 500})
+
+    expect(store.getActions()).toEqual([
+      _r.startBuildFail(expect.anything()),
+    ])
   })
 
   it('interacts with the API correctly (client error)', () => {
     const store = mockStore({})
 
-    fetch.mockResponse("oh no you didn't", {status: 400})
-
     expect.assertions(1)
-    return _r.startBuild().payload(store.dispatch)
-      .then((action) => {
-        expect(action.type).toEqual('START_BUILD_FAIL')
-      })
+    _r.startBuild().payload(store.dispatch)
+
+    xhr.mockResponse(["oops"], {status: 400})
+
+    expect(store.getActions()).toEqual([
+      _r.startBuildFail(expect.anything()),
+    ])
   })
 })
 
 
-describe('startBuildWin', () => {
+describe('receivedBuildMessage', () => {
+  it('updates the application state', () => {
+    const state = {
+      stdout: ""
+    }
+
+    const action1 = _r.receivedBuildMessage("Doing it")
+    const action2 = _r.receivedBuildMessage("Done")
+
+    const state1 = _r.default(state, action1)
+    const state2 = _r.default(state1, action2)
+
+
+    expect(state2).toEqual({
+      stdout: "Doing it\nDone\n"
+    })
+  })
+})
+
+describe('buildFinished', () => {
   it('updates the application state', () => {
     const state = {
       building: true
     }
 
-    const action = _r.startBuildWin({stdout: "Hi"})
+    const action1 = _r.buildFinished(0)
 
-    const nextState = _r.default(state, action)
+    const state1 = _r.default(state, action1)
 
-    expect(nextState).toEqual({
+    expect(state1).toEqual({
       building: false,
-      stdout: "Hi"
+      exitCode: 0
     })
   })
 })

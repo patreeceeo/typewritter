@@ -2,8 +2,10 @@
   "name": "client",
   "version": "0.1.0",
   "private": true,
-  "proxy": "http://localhost:6543",
+  "proxy": "http://localhost:8000",
   "dependencies": {
+    "@types/eventsource": "^1.0.2",
+    "event-source-polyfill": "^0.0.16",
     "fsa-redux-thunk": "^2.3.0",
     "gray-matter": "^4.0.1",
     "react": "^16.5.2",

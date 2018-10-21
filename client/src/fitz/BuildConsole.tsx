@@ -35,10 +35,10 @@ class Presentation extends React.Component<IProps> {
 }
 
 export default function BuildConsole(props) {
-  return <Container {...props} >{({stdout, startBuild}) => {
+  return <Container {...props} >{({messages, startBuild}) => {
     return (
       <Presentation
-        stdout={stdout}
+        stdout={messages.join('\n')}
         startBuild={startBuild}
         autoStart={true}
       />
